@@ -5,6 +5,8 @@ import grp
 import os
 import pwd
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 JUDGER_WORKSPACE_BASE = "/judger_run"
 LOG_BASE = "/log"
 
