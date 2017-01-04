@@ -6,3 +6,7 @@ redis-server
 ```
 celery worker -A aipWebserver.celery --loglevel=info
 ```
+```
+sudo groupadd compiler
+sudo useradd -g compiler compiler
+```
