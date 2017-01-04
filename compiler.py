@@ -3,7 +3,7 @@ import json
 import os
 
 import _judger
-from config import COMPILER_LOG_PATH, COMPILER_USER_UID, COMPILER_GROUP_GID
+from config import *
 from exception import CompileError
 
 
@@ -14,7 +14,6 @@ def _compile(compile_config, src_path, output_dir):
     compiler_out = os.path.join(output_dir, "compiler.out")
     _command = command.split(" ")
 
-    print(("PATH=" + os.getenv("PATH")))
     result = _judger.run(max_cpu_time=compile_config["max_cpu_time"],
                          max_real_time=compile_config["max_real_time"],
                          max_memory=compile_config["max_memory"],
@@ -29,9 +28,11 @@ def _compile(compile_config, src_path, output_dir):
                          env=[("PATH=" + os.getenv("PATH"))],
                          log_path=COMPILER_LOG_PATH,
                          seccomp_rule_name=None,
-                         uid=COMPILER_USER_UID,
-                         gid=COMPILER_GROUP_GID)
+                         uid=1000,
+                         gid=1000
+                         )
 
+    print(result)
     if result["result"] != _judger.RESULT_SUCCESS:
         if os.path.exists(compiler_out):
             with open(compiler_out) as f:
