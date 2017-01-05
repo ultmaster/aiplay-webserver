@@ -38,7 +38,7 @@ request json, response is written to sql directly
     "id":200,
     "language":"j",
     "code":"class Main { public static void main() { } }"
-  }
+  },
   "problem_id":1001,
   "max_time":1000,
   "max_sum_time":10000,
