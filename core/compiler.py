@@ -8,11 +8,13 @@ from exception import CompileError
 
 
 @celery.task
-def _compile(compile_config, src_path, output_dir):
+def _compile(compile_config, src_path, submission_id):
+    output_dir = COMPILE_DIR
     command = compile_config["compile_command"]
-    exe_path = os.path.join(output_dir, compile_config["exe_name"])
+    exe_path = os.path.join(output_dir, submission_id)
     command = command.format(src_path=src_path, exe_dir=output_dir, exe_path=exe_path)
-    compiler_out = os.path.join(output_dir, "compiler.out")
+    compiler_out = os.path.join(output_dir, submission_id + ".out")
+    compiler_log_path = os.path.join(output_dir, submission_id + '.log')
     _command = command.split(" ")
 
     result = _judger.run(max_cpu_time=compile_config["max_cpu_time"],
@@ -27,7 +29,7 @@ def _compile(compile_config, src_path, output_dir):
                          error_path=compiler_out,
                          args=_command[1:],
                          env=[("PATH=" + os.getenv("PATH"))],
-                         log_path=COMPILER_LOG_PATH,
+                         log_path=compiler_log_path,
                          seccomp_rule_name=None,
                          uid=0,
                          gid=0
@@ -37,12 +39,8 @@ def _compile(compile_config, src_path, output_dir):
     if result["result"] != _judger.RESULT_SUCCESS:
         if os.path.exists(compiler_out):
             with open(compiler_out) as f:
-                error = f.read().strip()
-                os.remove(compiler_out)
+                error = f.read()
                 if error:
                     raise CompileError(error)
-        raise CompileError("Compiler runtime error, info: %s" % json.dumps(result).decode("utf-8"))
-    else:
-        os.remove(compiler_out)
-        return exe_path
+        raise CompileError("Compiler runtime error, info: %s" % json.dumps(result))
 
