@@ -37,10 +37,13 @@ def _compile(compile_config, src_path, submission_id):
 
     print(result)
     if result["result"] != _judger.RESULT_SUCCESS:
+        error_type = "re"
         if os.path.exists(compiler_out):
             with open(compiler_out) as f:
                 error = f.read()
                 if error:
-                    raise CompileError(error)
-        raise CompileError("Compiler runtime error, info: %s" % json.dumps(result))
+                    error_type = "ce"
+                    print("Compile Error: " + error)
+        if error_type == "re":
+            ("Compiler Runtime Error: %s" % json.dumps(result))
 
