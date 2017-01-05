@@ -1,12 +1,13 @@
 # coding=utf-8
 import json
 import os
-
+from celery import Celery
 import _judger
 from config import *
 from exception import CompileError
 
 
+@app.task
 def _compile(compile_config, src_path, output_dir):
     command = compile_config["compile_command"]
     exe_path = os.path.join(output_dir, compile_config["exe_name"])
@@ -28,8 +29,8 @@ def _compile(compile_config, src_path, output_dir):
                          env=[("PATH=" + os.getenv("PATH"))],
                          log_path=COMPILER_LOG_PATH,
                          seccomp_rule_name=None,
-                         uid=1000,
-                         gid=1000
+                         uid=0,
+                         gid=0
                          )
 
     print(result)

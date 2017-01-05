@@ -31,3 +31,5 @@ request json, response is written to sql directly
   "round_id":1
 }
 ```
+
+first su before running celery

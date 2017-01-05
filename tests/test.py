@@ -1,12 +1,10 @@
 # coding=utf-8
 from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from config import *
-from compiler import _compile
+from core.compiler import _compile
+from aipWebserver import *
 import languages
-import json
 import unittest
-import requests
 
 cpp_src = """
 #include <iostream>
@@ -21,8 +19,7 @@ int main()
     return 0;
 }
 """
-test_dir = os.path.join(BASE_DIR, 'test_dir')
-
+test_dir = '/aiptest'
 
 class WebserverTest(unittest.TestCase):
 
@@ -30,13 +27,15 @@ class WebserverTest(unittest.TestCase):
         pass
 
     def test_compile_directly(self):
-        print(cpp_src)
         compile_config = languages.cpp_lang_config
         src_path = test_dir+'/test.cpp'
         output_dir = test_dir
         with open(src_path, "w") as f:
             f.write(cpp_src)
-        _compile(compile_config, src_path, output_dir)
+        _compile.delay(compile_config, src_path, output_dir)
+
+    def test_myBackgroundtask(self):
+        my_background_task.delay(20, 30)
 
     def tearDown(self):
         pass
