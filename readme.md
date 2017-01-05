@@ -4,7 +4,7 @@ sudo apt-get install redis-server
 redis-server
 ```
 ```
-celery worker -A aipWebserver.celery --loglevel=info
+celery worker -A config.celery --loglevel=info
 ```
 ```
 sudo groupadd compiler

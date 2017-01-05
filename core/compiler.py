@@ -7,7 +7,7 @@ from config import *
 from exception import CompileError
 
 
-@app.task
+@celery.task
 def _compile(compile_config, src_path, output_dir):
     command = compile_config["compile_command"]
     exe_path = os.path.join(output_dir, compile_config["exe_name"])

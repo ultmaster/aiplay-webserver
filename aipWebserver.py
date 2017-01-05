@@ -17,7 +17,7 @@ def hello_world():
     return '<h1>Hello World!</h1>'
 
 
-@app.task
+@celery.task
 def my_background_task(arg1, arg2):
     # some long running task here
     return arg1 + arg2
