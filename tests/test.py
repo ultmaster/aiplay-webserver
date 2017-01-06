@@ -8,6 +8,8 @@ from aipWebserver import *
 import config
 import languages
 import unittest
+import multiprocessing
+import time
 
 cpp_src = """
 #include <iostream>
@@ -35,6 +37,33 @@ int main()
     cout << a+b << endl;
     return 0;
 """
+
+data = {
+    "total_submissions": 2,
+    "submissions": [
+        {
+            "id": 1000,
+            "language": "c",
+            "code": "int main(){}"
+        },
+        {
+            "id": 1001,
+            "language": "c",
+            "code": "print('!')"
+        }
+    ],
+    "judge": {
+        "id": 200,
+        "language": "j",
+        "code": "class Main { public static void main() { } }"
+    },
+    "problem_id": 1001,
+    "max_time": 1000,
+    "max_sum_time": 10000,
+    "max_memory": 256,
+    "round_id": 1
+}
+
 
 class WebserverTest(unittest.TestCase):
 
@@ -75,34 +104,11 @@ class JudgeServerClientForTokenHeaderTest(unittest.TestCase):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data)
         url = "http://127.0.0.1:4999/"
-        return requests.post(url, **kwargs).json()
+        res = requests.post(url, json=data).json()
+        print(json.dumps(res))
+        return res
 
 
 
 if __name__ == '__main__':
-    data = {
-        "total_submissions": 2,
-        "submissions": [
-            {
-                "id": 1000,
-                "language": "c",
-                "code": "int main(){}"
-            },
-            {
-                "id": 1001,
-                "language": "p",
-                "code": "print('!')"
-            }
-        ],
-        "judge": {
-            "id": 200,
-            "language": "j",
-            "code": "class Main { public static void main() { } }"
-        },
-        "problem_id": 1001,
-        "max_time": 1000,
-        "max_sum_time": 10000,
-        "max_memory": 256,
-        "round_id": 1
-    }
     unittest.main()
