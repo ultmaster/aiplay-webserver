@@ -10,6 +10,10 @@ redis-server
 ```
 celery worker -A config.celery --loglevel=info
 ```
+```
+sudo groupadd compiler
+sudo useradd -g compiler compiler
+```
 There is also directories needed to create. I included them in `setup.py`. In the future, I hope
 `sudo python3 setup.py`
 will all do.
@@ -18,7 +22,7 @@ will all do.
 `su` before running everything
 ## JSON
 
-request json, response is written to sql directly
+request json, result is written to file
 ```json
 {
   "total_submissions":2,

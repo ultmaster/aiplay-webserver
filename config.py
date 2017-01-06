@@ -5,7 +5,7 @@ from flask import Flask
 import grp
 import os
 import pwd
-
+DEBUG = True
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 JUDGER_WORKSPACE_BASE = os.path.join(BASE_DIR, "judger_run")

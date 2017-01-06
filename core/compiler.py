@@ -14,7 +14,7 @@ def _compile(compile_config, src_path, submission_id):
     exe_path = os.path.join(output_dir, submission_id)
     command = command.format(src_path=src_path, exe_dir=output_dir, exe_path=exe_path)
     compiler_out = os.path.join(output_dir, submission_id + ".out")
-    compiler_log_path = os.path.join(output_dir, submission_id + '.log')
+    compiler_log = os.path.join(output_dir, submission_id + ".log")
     _command = command.split(" ")
 
     result = _judger.run(max_cpu_time=compile_config["max_cpu_time"],
@@ -29,7 +29,7 @@ def _compile(compile_config, src_path, submission_id):
                          error_path=compiler_out,
                          args=_command[1:],
                          env=[("PATH=" + os.getenv("PATH"))],
-                         log_path=compiler_log_path,
+                         log_path=compiler_log,
                          seccomp_rule_name=None,
                          uid=0,
                          gid=0
@@ -38,12 +38,18 @@ def _compile(compile_config, src_path, submission_id):
     print(result)
     if result["result"] != _judger.RESULT_SUCCESS:
         error_type = "re"
-        if os.path.exists(compiler_out):
-            with open(compiler_out) as f:
-                error = f.read()
-                if error:
-                    error_type = "ce"
-                    print("Compile Error: " + error)
-        if error_type == "re":
-            ("Compiler Runtime Error: %s" % json.dumps(result))
-
+        if DEBUG:
+            if os.path.exists(compiler_out):
+                with open(compiler_out) as f:
+                    error = f.read()
+                    if error:
+                        error_type = "ce"
+                        print("Compile Error: " + error)
+            if error_type == "re":
+                print("Compiler Runtime Error: %s" % json.dumps(result))
+        if not os.path.exists(compiler_out):
+            with open(compiler_out, 'w') as f:
+                f.write("error code="+result['error'])
+        return False
+    else:
+        return True
