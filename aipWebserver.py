@@ -9,7 +9,8 @@ def hello_world():
     if request.method == "POST":
         if request.is_json:
             data = request.get_json()
-            # do something
+            print(data)
+            Handler(data).run()
             return jsonify({'status': 'accept'})
     return jsonify({'status': 'reject'})
 

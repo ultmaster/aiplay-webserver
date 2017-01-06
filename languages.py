@@ -1,7 +1,7 @@
 #coding=utf-8
 LANGUAGE_SETTINGS = dict(
     c={
-        "src_name": "main.cpp",
+        "src_name": ".cpp",
         "exe_name": "main",
         "max_cpu_time": 3000,
         "max_real_time": 5000,

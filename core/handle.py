@@ -7,7 +7,7 @@ import _judger
 
 class Handler(object):
     def __init__(self, data):
-        for k, v in data:
+        for k, v in data.items():
             setattr(self, k, v)
 
     def run(self):
@@ -25,11 +25,11 @@ class Handler(object):
 
     @staticmethod
     def _compile_one(submission):
-        submission_dir = os.path.join(SUBMISSION_DIR, str(submission['id']))
-        if os.path.exists(submission_dir):
+        language_setting = LANGUAGE_SETTINGS[submission['language']]
+        src_path = os.path.join(SUBMISSION_DIR, str(submission['id'])+language_setting['src_name'])
+        if os.path.exists(src_path):
             return True
         else:
-            language_setting = LANGUAGE_SETTINGS[submission['language']]
-            os.mkdir(submission_dir)
-            src_path = os.path.join(submission_dir, language_setting['src_name'])
+            with open(src_path, 'w') as f:
+                f.write(submission['code'])
             return _compile(language_setting, src_path, str(submission['id']))

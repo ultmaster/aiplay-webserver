@@ -1,5 +1,6 @@
 # coding=utf-8
 from os import sys, path
+import requests
 import os
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from core.compiler import _compile
@@ -46,7 +47,10 @@ class WebserverTest(unittest.TestCase):
         src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
         with open(src_path, "w") as f:
             f.write(cpp_src)
-        _compile.delay(compile_config, src_path, str(submission_id))
+        if DEBUG:
+            _compile(compile_config, src_path, str(submission_id))
+        else:
+            _compile.delay(compile_config, src_path, str(submission_id))
 
     def test_compile_wrong_directly(self):
         compile_config = languages.LANGUAGE_SETTINGS['c']
@@ -54,7 +58,10 @@ class WebserverTest(unittest.TestCase):
         src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
         with open(src_path, "w") as f:
             f.write(cpp_wrong_src)
-        _compile.delay(compile_config, src_path, str(submission_id))
+        if DEBUG:
+            _compile(compile_config, src_path, str(submission_id))
+        else:
+            _compile.delay(compile_config, src_path, str(submission_id))
 
     def test_myBackgroundtask(self):
         my_background_task.delay(20, 30)
@@ -63,18 +70,39 @@ class WebserverTest(unittest.TestCase):
         pass
 
 
+class JudgeServerClientForTokenHeaderTest(unittest.TestCase):
+    def test_request(self):
+        kwargs = {"headers": {"Content-Type": "application/json"}}
+        kwargs["data"] = json.dumps(data)
+        url = "http://127.0.0.1:4999/"
+        return requests.post(url, **kwargs).json()
 
-# class JudgeServerClientForTokenHeaderTest(JudgeServerClient):
-#     def _request(self, url, data=None):
-#         kwargs = {"headers": {"Content-Type": "application/json"}}
-#         if data:
-#             kwargs["data"] = json.dumps(data)
-#         try:
-#             return requests.post(url, **kwargs).json()
-#         except Exception as e:
-#             raise JudgeServerClientError(e.message)
-#
-#
+
 
 if __name__ == '__main__':
+    data = {
+        "total_submissions": 2,
+        "submissions": [
+            {
+                "id": 1000,
+                "language": "c",
+                "code": "int main(){}"
+            },
+            {
+                "id": 1001,
+                "language": "p",
+                "code": "print('!')"
+            }
+        ],
+        "judge": {
+            "id": 200,
+            "language": "j",
+            "code": "class Main { public static void main() { } }"
+        },
+        "problem_id": 1001,
+        "max_time": 1000,
+        "max_sum_time": 10000,
+        "max_memory": 256,
+        "round_id": 1
+    }
     unittest.main()
