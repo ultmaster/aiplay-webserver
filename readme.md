@@ -22,7 +22,7 @@ request json, response is written to sql directly
 ```json
 {
   "total_submissions":2,
-  "submission":[
+  "submissions":[
     {
       "id":100,
       "language":"c",
@@ -31,7 +31,7 @@ request json, response is written to sql directly
     {
       "id":101,
       "language":"p",
-      "code":"print(!)"
+      "code":"print('!')"
     }
   ],
   "judge": {

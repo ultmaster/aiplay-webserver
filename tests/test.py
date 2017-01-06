@@ -41,7 +41,7 @@ class WebserverTest(unittest.TestCase):
         pass
 
     def test_compile_directly(self):
-        compile_config = languages.cpp_lang_config
+        compile_config = languages.LANGUAGE_SETTINGS['c']
         submission_id = 100
         src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
         with open(src_path, "w") as f:
@@ -49,7 +49,7 @@ class WebserverTest(unittest.TestCase):
         _compile.delay(compile_config, src_path, str(submission_id))
 
     def test_compile_wrong_directly(self):
-        compile_config = languages.cpp_lang_config
+        compile_config = languages.LANGUAGE_SETTINGS['c']
         submission_id = 101
         src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
         with open(src_path, "w") as f:
