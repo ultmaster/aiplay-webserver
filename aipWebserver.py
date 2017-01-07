@@ -14,11 +14,6 @@ def hello_world():
             return jsonify({'status': 'accept'})
     return jsonify({'status': 'reject'})
 
-@celery.task
-def my_background_task(arg1, arg2):
-    # some long running task here
-    return arg1 + arg2
-
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=4999, debug=True)

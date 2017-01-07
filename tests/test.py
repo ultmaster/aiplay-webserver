@@ -85,15 +85,13 @@ class WebserverTest(unittest.TestCase):
         compile_config = languages.LANGUAGE_SETTINGS['c']
         submission_id = 101
         src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
+        # if not os.path.exists(src_path):
         with open(src_path, "w") as f:
             f.write(cpp_wrong_src)
         if DEBUG:
             _compile(compile_config, src_path, str(submission_id))
         else:
             _compile.delay(compile_config, src_path, str(submission_id))
-
-    def test_myBackgroundtask(self):
-        my_background_task.delay(20, 30)
 
     def tearDown(self):
         pass
