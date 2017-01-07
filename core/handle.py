@@ -1,9 +1,5 @@
 import os
-from config import SUBMISSION_DIR
-from .compiler import _compile
-from languages import LANGUAGE_SETTINGS
-import _judger
-
+from .compiler import try_to_compile
 
 class Handler(object):
     def __init__(self, data):
@@ -11,25 +7,13 @@ class Handler(object):
             setattr(self, k, v)
 
     def run(self):
-        if self.compile():
-            # running!
-            pass
-        else:
-            return "RE"
+        if not self.compile():
+            raise BaseException("Some accident just happened.")
 
     def compile(self):
         for submission in self.submissions:
-            if not self._compile_one(submission):
+            if not try_to_compile(submission):
                 return False
+        if not try_to_compile(self.judge):
+            return False
         return True
-
-    @staticmethod
-    def _compile_one(submission):
-        language_setting = LANGUAGE_SETTINGS[submission['language']]
-        src_path = os.path.join(SUBMISSION_DIR, str(submission['id'])+language_setting['src_name'])
-        if os.path.exists(src_path):
-            return True
-        else:
-            with open(src_path, 'w') as f:
-                f.write(submission['code'])
-            return _compile(language_setting, src_path, str(submission['id']))

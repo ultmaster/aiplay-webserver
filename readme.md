@@ -29,12 +29,12 @@ request json, result is written to file
   "submissions":[
     {
       "id":100,
-      "language":"c",
+      "lang":"c",
       "code":"int main(){}"
     },
     {
       "id":101,
-      "language":"p",
+      "lang":"p",
       "code":"print('!')"
     }
   ],

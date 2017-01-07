@@ -1,9 +1,10 @@
 # coding=utf-8
 from os import sys, path
+import shutil
 import requests
 import os
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from core.compiler import _compile
+from core.compiler import try_to_compile
 from aipWebserver import *
 import config
 import languages
@@ -43,18 +44,18 @@ data = {
     "submissions": [
         {
             "id": 1000,
-            "language": "c",
+            "lang": "c",
             "code": "int main(){}"
         },
         {
             "id": 1001,
-            "language": "c",
+            "lang": "p",
             "code": "print('!')"
         }
     ],
     "judge": {
         "id": 200,
-        "language": "j",
+        "lang": "j",
         "code": "class Main { public static void main() { } }"
     },
     "problem_id": 1001,
@@ -67,37 +68,31 @@ data = {
 
 class WebserverTest(unittest.TestCase):
 
-    def setup(self):
-        pass
+    def setUp(self):
+        shutil.rmtree('/aipWebserver')
+        os.mkdir('/aipWebserver')
+        os.mkdir('/aipWebserver/submission')
+        os.mkdir('/aipWebserver/round')
+        os.mkdir('/aipWebserver/data')
+        os.mkdir('/aipWebserver/compile')
 
     def test_compile_directly(self):
-        compile_config = languages.LANGUAGE_SETTINGS['c']
-        submission_id = 100
-        src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
-        with open(src_path, "w") as f:
-            f.write(cpp_src)
-        if DEBUG:
-            _compile(compile_config, src_path, str(submission_id))
-        else:
-            _compile.delay(compile_config, src_path, str(submission_id))
+        submission = dict()
+        submission["id"] = 100
+        submission["lang"] = 'c'
+        submission["code"] = cpp_src
+        try_to_compile(submission)
 
     def test_compile_wrong_directly(self):
-        compile_config = languages.LANGUAGE_SETTINGS['c']
-        submission_id = 101
-        src_path = os.path.join(config.SUBMISSION_DIR, str(submission_id) + ".cpp")
-        # if not os.path.exists(src_path):
-        with open(src_path, "w") as f:
-            f.write(cpp_wrong_src)
-        if DEBUG:
-            _compile(compile_config, src_path, str(submission_id))
-        else:
-            _compile.delay(compile_config, src_path, str(submission_id))
+        submission = dict()
+        submission["id"] = 101
+        submission["lang"] = 'c'
+        submission["code"] = cpp_wrong_src
+        try_to_compile(submission)
 
     def tearDown(self):
         pass
 
-
-class JudgeServerClientForTokenHeaderTest(unittest.TestCase):
     def test_request(self):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data)

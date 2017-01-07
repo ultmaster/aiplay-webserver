@@ -1,26 +1,24 @@
 # coding=utf-8
 import json
 import os
-from celery import Celery
 import _judger
 from config import *
-from exception import CompileError
+import languages
 
 
 @celery.task
-def _compile(compile_config, src_path, submission_id):
-    output_dir = COMPILE_DIR
-    command = compile_config["compile_command"]
-    exe_path = os.path.join(output_dir, submission_id)
-    command = command.format(src_path=src_path, exe_dir=output_dir, exe_path=exe_path)
-    compiler_out = os.path.join(output_dir, submission_id + ".out")
-    compiler_log = os.path.join(output_dir, submission_id + ".log")
+def _compile(lang, src_path, submission_id):
+    output_dir = languages.get_exe_dir(submission_id)
+    exe_path = languages.get_exe_path(lang, submission_id)
+    command = languages.get_compile_command(lang, src_path, exe_path)
+    compiler_out = os.path.join(output_dir, "compile.out")
+    compiler_log = os.path.join(output_dir, "compile.log")
     _command = command.split(" ")
 
-    result = _judger.run(max_cpu_time=compile_config["max_cpu_time"],
-                         max_real_time=compile_config["max_real_time"],
-                         max_memory=compile_config["max_memory"],
-                         max_output_size=1024 * 1024,
+    result = _judger.run(max_cpu_time=languages.get_max_cpu_time(lang),
+                         max_real_time=languages.get_max_real_time(lang),
+                         max_memory=languages.get_max_memory(lang),
+                         max_output_size=languages.get_max_output_size(lang),
                          max_process_number=_judger.UNLIMITED,
                          exe_path=_command[0],
                          # /dev/null is best, but in some system, this will call ioctl system call
@@ -34,7 +32,7 @@ def _compile(compile_config, src_path, submission_id):
                          uid=0,
                          gid=0
                          )
-
+    print(":::" + lang)
     print(result)
     if result["result"] != _judger.RESULT_SUCCESS:
         error_type = "re"
@@ -49,7 +47,18 @@ def _compile(compile_config, src_path, submission_id):
                 print("Compiler Runtime Error: %s" % json.dumps(result))
         if not os.path.exists(compiler_out):
             with open(compiler_out, 'w') as f:
-                f.write("error code="+result['error'])
+                f.write("Error Code="+result['error'])
         return False
     else:
         return True
+
+
+def try_to_compile(submission):
+    src_path = languages.get_src_path(submission['lang'], submission['id'])
+    if os.path.exists(src_path):
+        return True
+    else:
+        with open(src_path, 'w') as f:
+            f.write(submission['code'])
+        # TODO: running without celery
+        return _compile(submission['lang'], src_path, str(submission['id']))
