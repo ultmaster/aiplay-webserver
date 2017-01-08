@@ -40,29 +40,31 @@ int main()
 """
 
 data = {
-    "total_submissions": 2,
-    "submissions": [
-        {
-            "id": 1000,
-            "lang": "c",
-            "code": "int main(){}"
-        },
-        {
-            "id": 1001,
-            "lang": "p",
-            "code": "print('!')"
-        }
-    ],
-    "judge": {
-        "id": 200,
-        "lang": "j",
-        "code": "class Main { public static void main() { } }"
+  "total_submissions":2,
+  "submissions":[
+    {
+      "id":100,
+      "lang":"c",
+      "code":"int main(){}"
     },
-    "problem_id": 1001,
-    "max_time": 1000,
-    "max_sum_time": 10000,
-    "max_memory": 256,
-    "round_id": 1
+    {
+      "id":101,
+      "lang":"p",
+      "code":"print('!')"
+    }
+  ],
+  "judge": {
+    "id":200,
+    "lang":"j",
+    "code":"class Main { public static void main() { } }"
+  },
+  "round_config": {
+    "problem_id":1001,
+    "max_time":1000,
+    "max_sum_time":10000,
+    "max_memory":256,
+    "round_id":1
+  }
 }
 
 
@@ -76,19 +78,19 @@ class WebserverTest(unittest.TestCase):
         os.mkdir('/aipWebserver/data')
         os.mkdir('/aipWebserver/compile')
 
-    def test_compile_directly(self):
-        submission = dict()
-        submission["id"] = 100
-        submission["lang"] = 'c'
-        submission["code"] = cpp_src
-        try_to_compile(submission)
-
-    def test_compile_wrong_directly(self):
-        submission = dict()
-        submission["id"] = 101
-        submission["lang"] = 'c'
-        submission["code"] = cpp_wrong_src
-        try_to_compile(submission)
+    # def test_compile_directly(self):
+    #     submission = dict()
+    #     submission["id"] = 100
+    #     submission["lang"] = 'c'
+    #     submission["code"] = cpp_src
+    #     try_to_compile(submission)
+    #
+    # def test_compile_wrong_directly(self):
+    #     submission = dict()
+    #     submission["id"] = 101
+    #     submission["lang"] = 'c'
+    #     submission["code"] = cpp_wrong_src
+    #     try_to_compile(submission)
 
     def tearDown(self):
         pass
@@ -99,9 +101,7 @@ class WebserverTest(unittest.TestCase):
         url = "http://127.0.0.1:4999/"
         res = requests.post(url, json=data).json()
         print(json.dumps(res))
-        return res
-
-
+        # return res
 
 if __name__ == '__main__':
     unittest.main()

@@ -40,14 +40,16 @@ request json, result is written to file
   ],
   "judge": {
     "id":200,
-    "language":"j",
+    "lang":"j",
     "code":"class Main { public static void main() { } }"
   },
-  "problem_id":1001,
-  "max_time":1000,
-  "max_sum_time":10000,
-  "max_memory":256,
-  "round_id":1
+  "round_config": {
+    "problem_id":1001,
+    "max_time":1000,
+    "max_sum_time":10000,
+    "max_memory":256,
+    "round_id":1
+  }
 }
 ```
 ## Root structure:

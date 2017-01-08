@@ -1,17 +1,16 @@
 from celery import Celery
 from flask import Flask, request, json, jsonify
 from config import *
-from core.handle import Handler
+from core.handler import Handler
 
 
 @app.route('/', methods=['POST'])
 def hello_world():
-    if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-            print(data)
-            Handler(data).run()
-            return jsonify({'status': 'accept'})
+    if request.is_json:
+        data = request.get_json()
+        print(data)
+        Handler(data).run()
+        return jsonify({'status': 'accept'})
     return jsonify({'status': 'reject'})
 
 
