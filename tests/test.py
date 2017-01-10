@@ -76,6 +76,7 @@ class WebserverTest(unittest.TestCase):
         os.mkdir('/aipWebserver/submission')
         os.mkdir('/aipWebserver/round')
         os.mkdir('/aipWebserver/data')
+        os.mkdir('/aipWebserver/data/1001')
         os.mkdir('/aipWebserver/compile')
 
     # def test_compile_directly(self):

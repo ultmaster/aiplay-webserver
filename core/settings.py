@@ -53,11 +53,12 @@ class CompileSettings(object):
 
 class RunSettings(object):
     def __init__(self, settings):
-        self.round_dir = os.path.join(ROUND_DIR, str(settings.submission_id))
+        self.round_dir = os.path.join(ROUND_DIR, str(settings.round_id))
         self.exe_name = settings.language_settings['exe_name']
         self.exe_path = os.path.join(self.round_dir, self.exe_name)
         self.run_cmd = settings.language_settings['exe_cmd'].format(
-            exe_path=self.exe_path
+            exe_path=self.exe_path,
+            max_memory=settings.max_memory * 1024  # only for java
         ).split(' ')
         self.input_path = os.path.join(self.round_dir, 'in')
         self.output_path = os.path.join(self.round_dir, 'out')

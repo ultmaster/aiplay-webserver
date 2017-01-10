@@ -15,7 +15,7 @@ _LANGUAGE_SETTINGS = dict(
     },
     j = {
         "src_name": "Main.java",
-        "exe_name": "Main",
+        "exe_name": "Main.class",
         "max_time_factor": 2,
         "max_memory": -1,
         "compile_cmd": "/usr/bin/javac {src_path} -encoding UTF8",
@@ -26,7 +26,7 @@ _LANGUAGE_SETTINGS = dict(
     p = {
         # A Naive solution of copy
         "src_name": "solution.py",
-        "exe_name": "solution.pyc",
+        "exe_name": "solution.py",  # TODO assign exe_path when compile
         "max_time_factor": 4,
         "max_memory": 128 * 1024 * 1024,
         "compile_cmd": "/usr/bin/python3 -m py_compile {src_path}",

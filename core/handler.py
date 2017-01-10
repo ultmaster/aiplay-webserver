@@ -21,7 +21,7 @@ class Handler(object):
     def run(self):
         if not self.compile():
             raise BaseException("Some accident just happened.")
-        self.judger.prepaidre_for_run()
+        self.prepare_for_run()
 
     def compile(self):
         for submission in self.submissions:

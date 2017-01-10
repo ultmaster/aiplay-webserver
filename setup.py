@@ -6,6 +6,7 @@ try:
     os.mkdir('/aipWebserver/round')
     os.mkdir('/aipWebserver/data')
     os.mkdir('/aipWebserver/compile')
+    os.mkdir('/aipWebserver/data/1001')
 except FileExistsError:
     print('Folder already exists.')
 except PermissionError:
