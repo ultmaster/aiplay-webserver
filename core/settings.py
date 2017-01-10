@@ -34,7 +34,7 @@ class CompileSettings(object):
         self.compile = dict(
             max_cpu_time=20 * 1000,
             max_real_time=20 * 1000,
-            max_memory=(-1 if settings.lang == 'j' else 128 * 1024 * 1024 ),
+            max_memory=128 * 1024 * 1024 if settings.lang != 'j' else -1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
             exe_path=self.compile_cmd[0],
@@ -54,16 +54,34 @@ class CompileSettings(object):
 class RunSettings(object):
     def __init__(self, settings):
         self.round_dir = os.path.join(ROUND_DIR, str(settings.submission_id))
-        self.seccomp_rule = settings.language_settings['seccomp_rule']
+        self.exe_name = settings.language_settings['exe_name']
+        self.exe_path = os.path.join(self.round_dir, self.exe_name)
+        self.run_cmd = settings.language_settings['exe_cmd'].format(
+            exe_path=self.exe_path
+        ).split(' ')
+        self.input_path = os.path.join(self.round_dir, 'in')
+        self.output_path = os.path.join(self.round_dir, 'out')
+        self.log_path = os.path.join(self.round_dir, 'run.log')
 
+        self.seccomp_rule = settings.language_settings['seccomp_rule']
         self.max_time = settings.max_time
-        self.max_real_time = int(self.max_time * 1.2)
-        if settings.lang == 'j':
-            self.max_memory = -1
-        else:
-            self.max_memory = settings.max_memory * 1048576
+        self.max_real_time = self.max_time * 3
+        self.max_memory = settings.max_memory * 1048576 if settings.lang != 'j' else -1
+
         self.run = dict(
             max_cpu_time=self.max_time,
             max_real_time=self.max_real_time,
-
+            max_memory=self.max_memory,
+            max_output_size=128 * 1024 * 1024,
+            max_process_number=_judger.UNLIMITED,
+            exe_path=self.run_cmd[0],
+            input_path=self.input_path,
+            output_path=self.output_path,
+            error_path=self.log_path,
+            args=self.run_cmd[1:],
+            env=[("PATH=" + os.getenv("PATH"))] + settings.language_settings['env'],
+            log_path=self.log_path,
+            seccomp_rule_path=self.seccomp_rule,
+            uid=0,  # not safe
+            gid=0
         )

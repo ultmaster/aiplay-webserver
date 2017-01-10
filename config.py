@@ -14,6 +14,7 @@ LOG_BASE = os.path.join(BASE_DIR, "log")
 SUBMISSION_DIR = '/aipWebserver/submission'
 COMPILE_DIR = '/aipWebserver/compile'
 ROUND_DIR = '/aipWebserver/round'
+DATA_DIR = '/aipWebserver/data'
 
 RUN_USER_UID = pwd.getpwnam("nobody").pw_uid
 RUN_GROUP_GID = grp.getgrnam("nogroup").gr_gid

@@ -3,6 +3,7 @@ from config import COMPILE_DIR, SUBMISSION_DIR, DEBUG
 import _judger
 import os
 from .settings import BaseSettings, CompileSettings, RunSettings
+import shutil
 
 
 class Program(object):
@@ -12,14 +13,10 @@ class Program(object):
         self.run_settings = RunSettings(self.settings)
 
     def _compile(self):
-        os.mkdir(self.compile_settings.submission_dir)
-        with open(self.compile_settings.src_path, 'w') as f:
-            f.write(self.settings.code)
-        print(self.compile_settings.compile)
         return _judger.run(**self.compile_settings.compile)
 
     def _run(self):
-        pass
+        return _judger.run(**self.run_settings.run)
 
 
 class Submission(Program):
@@ -28,6 +25,9 @@ class Submission(Program):
 
     def compile(self):
         # TODO if compile result exist
+        os.mkdir(self.compile_settings.submission_dir)
+        with open(self.compile_settings.src_path, 'w') as f:
+            f.write(self.settings.code)
         result = self._compile()
         print(":::" + self.settings.lang)
         print(result)
@@ -38,3 +38,10 @@ class Submission(Program):
             return False
         else:
             return True
+
+    def prepare_for_run(self):
+        shutil.copyfile(self.compile_settings.exe_path, self.run_settings.exe_path)
+
+    def run(self):
+        result = self._run()
+        # if re... do something
