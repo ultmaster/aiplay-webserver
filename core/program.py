@@ -15,7 +15,8 @@ class Program(object):
         os.mkdir(self.compile_settings.submission_dir)
         with open(self.compile_settings.src_path, 'w') as f:
             f.write(self.settings.code)
-        return _judger.run(*self.compile_settings.compile)
+        print(self.compile_settings.compile)
+        return _judger.run(**self.compile_settings.compile)
 
     def _run(self):
         pass

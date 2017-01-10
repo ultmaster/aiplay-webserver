@@ -15,6 +15,7 @@ class BaseSettings(object):
         self.problem_id = round_config['problem_id']
         self.round_id = round_config['round_id']
         self.max_time = round_config['max_time']
+        self.max_memory = round_config['max_memory']
 
 
 class CompileSettings(object):
@@ -28,12 +29,12 @@ class CompileSettings(object):
         self.compile_log_path = os.path.join(self.submission_dir, 'compile.log')
         self.compile_cmd = settings.language_settings['compile_cmd'].format(
             src_path=self.src_path,
-            exe_path=self.exe_path
+            exe_path=self.exe_path,
         ).split(' ')
         self.compile = dict(
-            max_cpu_time=10 * 1000,
-            max_real_time=10 * 1000,
-            max_memory=128 * 1024 * 1024,
+            max_cpu_time=20 * 1000,
+            max_real_time=20 * 1000,
+            max_memory=(-1 if settings.lang == 'j' else 128 * 1024 * 1024 ),
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
             exe_path=self.compile_cmd[0],
@@ -52,14 +53,15 @@ class CompileSettings(object):
 
 class RunSettings(object):
     def __init__(self, settings):
-        self.round_dir = os.path.join(ROUND_DIR, settings.submission_id)
+        self.round_dir = os.path.join(ROUND_DIR, str(settings.submission_id))
+        self.seccomp_rule = settings.language_settings['seccomp_rule']
 
-        self.seccomp_rule = settings.language_setting['seccomp_rule']
-        self.max_time_factor = settings.language_setting['max_time_factor']
-
-        self.max_time = settings.max_time * self.max_time_factor
+        self.max_time = settings.max_time
         self.max_real_time = int(self.max_time * 1.2)
-        self.max_memory = settings.max_memory * (1048576 if settings.lang != 'j' else 1024)
+        if settings.lang == 'j':
+            self.max_memory = -1
+        else:
+            self.max_memory = settings.max_memory * 1048576
         self.run = dict(
             max_cpu_time=self.max_time,
             max_real_time=self.max_real_time,
