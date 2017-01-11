@@ -17,16 +17,19 @@ class BaseSettings(object):
         self.max_time = round_config['max_time']
         self.max_memory = round_config['max_memory']
 
+        self.submission_dir = os.path.join(SUBMISSION_DIR, str(self.submission_id))
+        if not os.path.exists(self.submission_dir):
+            os.mkdir(self.submission_dir)
+
 
 class CompileSettings(object):
     def __init__(self, settings):
-        self.submission_dir = os.path.join(SUBMISSION_DIR, str(settings.submission_id))
         self.src_name = settings.language_settings['src_name']
         self.exe_name = settings.language_settings['exe_name']
-        self.src_path = os.path.join(self.submission_dir, self.src_name)
-        self.exe_path = os.path.join(self.submission_dir, self.exe_name)
-        self.compile_out_path = os.path.join(self.submission_dir, 'compile.out')
-        self.compile_log_path = os.path.join(self.submission_dir, 'compile.log')
+        self.src_path = os.path.join(settings.submission_dir, self.src_name)
+        self.exe_path = os.path.join(settings.submission_dir, self.exe_name)
+        self.compile_out_path = os.path.join(settings.submission_dir, 'compile.out')
+        self.compile_log_path = os.path.join(settings.submission_dir, 'compile.log')
         self.compile_cmd = settings.language_settings['compile_cmd'].format(
             src_path=self.src_path,
             exe_path=self.exe_path,
@@ -54,11 +57,17 @@ class CompileSettings(object):
 class RunSettings(object):
     def __init__(self, settings):
         self.round_dir = os.path.join(ROUND_DIR, str(settings.round_id))
+        if not os.path.exists(self.round_dir):
+            os.mkdir(self.round_dir)
+
         self.exe_name = settings.language_settings['exe_name']
-        self.exe_path = os.path.join(self.round_dir, self.exe_name)
+        self.exe_path = os.path.join(settings.submission_dir, self.exe_name)
         self.run_cmd = settings.language_settings['exe_cmd'].format(
             exe_path=self.exe_path,
-            max_memory=settings.max_memory * 1024  # only for java
+            # The following is for Java
+            exe_dir=settings.submission_dir,
+            exe_name=self.exe_name,
+            max_memory=settings.max_memory
         ).split(' ')
         self.input_path = os.path.join(self.round_dir, 'in')
         self.output_path = os.path.join(self.round_dir, 'out')
@@ -66,7 +75,7 @@ class RunSettings(object):
 
         self.seccomp_rule = settings.language_settings['seccomp_rule']
         self.max_time = settings.max_time
-        self.max_real_time = self.max_time * 3
+        self.max_real_time = self.max_time * 2
         self.max_memory = settings.max_memory * 1048576 if settings.lang != 'j' else -1
 
         self.run = dict(
@@ -82,7 +91,15 @@ class RunSettings(object):
             args=self.run_cmd[1:],
             env=[("PATH=" + os.getenv("PATH"))] + settings.language_settings['env'],
             log_path=self.log_path,
-            seccomp_rule_path=self.seccomp_rule,
+            seccomp_rule_name=self.seccomp_rule,
             uid=0,  # not safe
             gid=0
         )
+
+    def update_input_path(self, path):
+        self.input_path = path
+        self.run['input_path'] = self.input_path
+
+    def update_output_path(self, path):
+        self.output_path = path
+        self.run['output_path'] = self.output_path

@@ -55,7 +55,7 @@ data = {
   "judge": {
     "id":200,
     "lang":"j",
-    "code":"class Main { public static void main() { } }"
+    "code":"class Main { public static void main(String[] args) { } }"
   },
   "round_config": {
     "problem_id":1001,

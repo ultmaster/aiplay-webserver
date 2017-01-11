@@ -16,6 +16,7 @@ class Program(object):
         return _judger.run(**self.compile_settings.compile)
 
     def _run(self):
+        print(self.run_settings.run)
         return _judger.run(**self.run_settings.run)
 
 
@@ -25,7 +26,6 @@ class Submission(Program):
 
     def compile(self):
         # TODO if compile result exist
-        os.mkdir(self.compile_settings.submission_dir)
         with open(self.compile_settings.src_path, 'w') as f:
             f.write(self.settings.code)
         result = self._compile()
@@ -38,10 +38,17 @@ class Submission(Program):
         else:
             return True
 
-    def prepare_for_run(self):
-        # shutil.copyfile(self.compile_settings.exe_path, self.run_settings.exe_path)
-        pass
+    def run(self, input='', output=''):
+        if input != '':
+            self.run_settings.update_input_path(input)
+        if output != '':
+            self.run_settings.update_output_path(output)
+        # TEST
+        with open(self.run_settings.input_path, 'w') as f:
+            f.write('hahaha')
 
-    def run(self):
         result = self._run()
-        # if re... do something
+        print("Running Result of " + self.settings.lang + ": " + str(result))
+        if result["result"] != _judger.RESULT_SUCCESS:
+            return False
+        return True
