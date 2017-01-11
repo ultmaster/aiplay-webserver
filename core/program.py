@@ -29,8 +29,7 @@ class Submission(Program):
         with open(self.compile_settings.src_path, 'w') as f:
             f.write(self.settings.code)
         result = self._compile()
-        print(":::" + self.settings.lang)
-        print(result)
+        print("Compile Result of " + self.settings.lang + ": " + str(result))
         if result["result"] != _judger.RESULT_SUCCESS:
             if not os.path.exists(self.compile_settings.compile_out_path):
                 with open(self.compile_settings.compile_out_path, 'w') as f:
@@ -40,7 +39,8 @@ class Submission(Program):
             return True
 
     def prepare_for_run(self):
-        shutil.copyfile(self.compile_settings.exe_path, self.run_settings.exe_path)
+        # shutil.copyfile(self.compile_settings.exe_path, self.run_settings.exe_path)
+        pass
 
     def run(self):
         result = self._run()

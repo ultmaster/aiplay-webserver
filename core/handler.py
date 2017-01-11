@@ -1,5 +1,4 @@
 import os
-from .compiler import try_to_compile
 from .program import Submission
 import shutil
 from config import DATA_DIR, ROUND_DIR
@@ -16,7 +15,7 @@ class Handler(object):
         self.submissions = []
         for submission in self.submission_list:
             self.submissions.append(Submission(submission, self.round_config))
-        self.judger = Submission(data['judge'], self.round_config)
+        self.judge = Submission(data['judge'], self.round_config)
 
     def run(self):
         if not self.compile():
@@ -27,7 +26,7 @@ class Handler(object):
         for submission in self.submissions:
             if not submission.compile():
                 return False
-        if not self.judger.compile():
+        if not self.judge.compile():
             return False
         return True
 
@@ -35,4 +34,4 @@ class Handler(object):
         shutil.copytree(self.data_dir, self.round_dir)
         for submission in self.submissions:
             submission.prepare_for_run()
-        self.judger.prepare_for_run()
+        self.judge.prepare_for_run()

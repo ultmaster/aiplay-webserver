@@ -4,8 +4,7 @@ import shutil
 import requests
 import os
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-from core.compiler import try_to_compile
-from aipWebserver import *
+from server import *
 import config
 import languages
 import unittest
