@@ -87,7 +87,7 @@ Currently the following phrases are supported (we don't care about upper-lower c
 3. ok / yes / right / correct (meaning score 100)
 4. no / wrong (meaning score 0)
 5. scored / scores / score <integer> (from 0 to 100)
-6. idleness limit exceeded (score 0)
+6. idleness limit exceeded (score 0 and stop)
 ```
 Rule #6 basically means that the program does nothing or does something weird that Judge cannot understand. :)
 
@@ -95,7 +95,7 @@ Now consider a rare case in which you write:
 ```
 Your idea is correct, but you did something wrong. So you scored 50.
 ```
-In which case we will match bottom-up. Note that the sentence match Rule #5, so it has already scored 50.
+In which case we will match **bottom-up**. Note that the sentence match Rule #5, so it has already scored 50.
 No matter it is 'correct' or 'wrong', it will be 50.
 
 If there were to be some terrible accident that makes Judge unhappy and even angry,

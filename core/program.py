@@ -22,6 +22,9 @@ class Program(object):
         self.max_memory = config['max_memory']
         self.max_sum_time = config['max_sum_time']
 
+        self.sum_time = 0
+        self.sum_memory = 0
+
         # Deal with directories
         self.submission_dir = os.path.join(SUBMISSION_DIR, str(self.submission_id))
         self.round_dir = os.path.join(ROUND_DIR, str(self.round_id))
@@ -73,7 +76,10 @@ class Program(object):
         if not os.path.exists(self.input_path):
             open(self.input_path, "w").close()
         result = self._run()
-        self.max_sum_time -= result['cpu_time']
+        self.sum_time += result['cpu_time']
+        self.sum_memory = max(self.sum_memory, result['memory'])
+        if self.max_sum_time > 0 and self.sum_time > self.max_sum_time:
+            result['error'] = 1
         print("Running Result of " + self.lang + ": " + str(result))
         return result
 
