@@ -1,21 +1,21 @@
 import os
 from .program import Program
-import shutil
+from .judge import Judge
 from config import DATA_DIR, ROUND_DIR
 
 class Handler(object):
     def __init__(self, data):
         submission_list = data['submissions']
-        round_config = data['config']
-        self.problem_id = round_config['problem_id']
-        self.round_id = round_config['round_id']
+        config = data['config']
+        self.problem_id = config['problem_id']
+        self.round_id = config['round_id']
         self.data_dir = os.path.join(DATA_DIR, str(self.problem_id))
         self.round_dir = os.path.join(ROUND_DIR, str(self.round_id))
 
         self.submissions = []
         for submission in submission_list:
-            self.submissions.append(Program(submission, round_config))
-        self.judge = Program(data['judge'], round_config)
+            self.submissions.append(Program(submission, config))
+        self.judge = Judge(data['judge'], config)
 
     def control(self):
         for f in os.listdir(DATA_DIR):

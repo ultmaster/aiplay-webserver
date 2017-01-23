@@ -2,7 +2,7 @@ from config import SUBMISSION_DIR, COMPILE_DIR
 import os
 
 
-_LANGUAGE_SETTINGS = dict(
+LANGUAGE_SETTINGS = dict(
     c = {
         "src_name": "main.cpp",
         "exe_name": "main",

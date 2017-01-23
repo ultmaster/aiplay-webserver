@@ -1,6 +1,6 @@
 import _judger
 from config import *
-from core.languages import _LANGUAGE_SETTINGS
+from .languages import LANGUAGE_SETTINGS
 
 
 # This class is meant to deal with all difficulties when it comes to programs.
@@ -12,7 +12,7 @@ class Program(object):
         self.submission_id = submission['id']
         self.lang = submission['lang']
         self.code = submission['code']
-        self.language_settings = _LANGUAGE_SETTINGS[self.lang]
+        self.language_settings = LANGUAGE_SETTINGS[self.lang]
 
         # Restrictive settings
         self.problem_id = config['problem_id']
@@ -70,10 +70,8 @@ class Program(object):
             return True
 
     def run(self):
-        # TEST
-        with open(self.input_path, 'w') as f:
-            f.write('hahaha')
-
+        if not os.path.exists(self.input_path):
+            open(self.input_path, "w").close()
         result = self._run()
         print("Running Result of " + self.lang + ": " + str(result))
         return result
@@ -122,4 +120,3 @@ class Program(object):
             uid=0,  # not safe
             gid=0
         )
-
