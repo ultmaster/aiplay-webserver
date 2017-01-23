@@ -11,10 +11,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 JUDGER_WORKSPACE_BASE = os.path.join(BASE_DIR, "judger_run")
 LOG_BASE = os.path.join(BASE_DIR, "log")
 
-SUBMISSION_DIR = '/aipWebserver/submission'
-COMPILE_DIR = '/aipWebserver/compile'
-ROUND_DIR = '/aipWebserver/round'
-DATA_DIR = '/aipWebserver/data'
+SUBMISSION_DIR = '/judge_server/submission'
+COMPILE_DIR = '/judge_server/compile'
+ROUND_DIR = '/judge_server/round'
+DATA_DIR = '/judge_server/data'
 
 RUN_USER_UID = pwd.getpwnam("nobody").pw_uid
 RUN_GROUP_GID = grp.getgrnam("nogroup").gr_gid

@@ -1,6 +1,5 @@
 import os
 
-
 # Tester: to test whether a submission is a valid submission
 class Tester(object):
 

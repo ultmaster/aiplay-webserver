@@ -1,12 +1,12 @@
 import os
-from .program import Submission
+from .program import Program
 import shutil
 from config import DATA_DIR, ROUND_DIR
 
 class Handler(object):
     def __init__(self, data):
         submission_list = data['submissions']
-        round_config = data['round_config']
+        round_config = data['config']
         self.problem_id = round_config['problem_id']
         self.round_id = round_config['round_id']
         self.data_dir = os.path.join(DATA_DIR, str(self.problem_id))
@@ -14,16 +14,23 @@ class Handler(object):
 
         self.submissions = []
         for submission in submission_list:
-            self.submissions.append(Submission(submission, round_config))
-        self.judge = Submission(data['judge'], round_config)
+            self.submissions.append(Program(submission, round_config))
+        self.judge = Program(data['judge'], round_config)
+
+    def control(self):
+        for f in os.listdir(DATA_DIR):
+            # List all input data
+            os.symlink(f, os.path.join(DATA_DIR, 'in'))
+
 
     def run(self):
         if not self.compile():
             raise BaseException("Some accident just happened.")
-        # TODO: redirect input
 
         for submission in self.submissions:
-            submission.run()
+            result = submission.run()
+            #if result["result"] != _judger.RESULT_SUCCESS:
+            #    return
         self.judge.run()
 
     def compile(self):

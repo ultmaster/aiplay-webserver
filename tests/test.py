@@ -1,15 +1,12 @@
 # coding=utf-8
-from os import sys, path
 import shutil
+from os import sys, path
+
 import requests
-import os
+
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from server import *
-import config
-import languages
 import unittest
-import multiprocessing
-import time
 
 cpp_src = """
 #include <iostream>
@@ -39,12 +36,11 @@ int main()
 """
 
 data = {
-  "total_submissions":2,
   "submissions":[
     {
       "id":100,
       "lang":"c",
-      "code":"int main(){}"
+      "code":cpp_src
     },
     {
       "id":101,
@@ -57,12 +53,12 @@ data = {
     "lang":"j",
     "code":"class Main { public static void main(String[] args) { } }"
   },
-  "round_config": {
+  "config": {
     "problem_id":1001,
+    "round_id":1,
     "max_time":1000,
     "max_sum_time":10000,
-    "max_memory":256,
-    "round_id":1
+    "max_memory":256
   }
 }
 
@@ -70,13 +66,14 @@ data = {
 class WebserverTest(unittest.TestCase):
 
     def setUp(self):
-        shutil.rmtree('/aipWebserver')
-        os.mkdir('/aipWebserver')
-        os.mkdir('/aipWebserver/submission')
-        os.mkdir('/aipWebserver/round')
-        os.mkdir('/aipWebserver/data')
-        os.mkdir('/aipWebserver/data/1001')
-        os.mkdir('/aipWebserver/compile')
+        if os.path.exists('/judge_server'):
+            shutil.rmtree('/judge_server')
+        os.mkdir('/judge_server')
+        os.mkdir('/judge_server/submission')
+        os.mkdir('/judge_server/round')
+        os.mkdir('/judge_server/data')
+        os.mkdir('/judge_server/data/1001')
+        os.mkdir('/judge_server/compile')
 
     # def test_compile_directly(self):
     #     submission = dict()
