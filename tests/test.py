@@ -8,9 +8,9 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from server import *
 import unittest
 
-cpp_src = """
+# Correct A+B
+cpp_src_1 = """
 #include <iostream>
-
 using namespace std;
 
 int main()
@@ -22,9 +22,9 @@ int main()
 }
 """
 
-cpp_wrong_src = """
+# Compile Error A+B
+cpp_src_2 = """
 #include <iostream>
-
 using namespace std;
 
 int main()
@@ -35,17 +35,77 @@ int main()
     return 0;
 """
 
+# Wrong Answer A+B
+cpp_src_3 = """
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int a,b;
+    cin >> a >> b;
+    cout << a+b+1 << endl;
+    return 0;
+}
+"""
+
+# Wrong A*B
+cpp_src_4 = """
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int a,b;
+    cin >> a >> b;
+    cout << a*b << endl;
+    return 0;
+}
+"""
+
+# Correct A*B
+cpp_src_5 = """
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    long long a,b;
+    cin >> a >> b;
+    cout << a*b << endl;
+    return 0;
+}
+"""
+
+# A*B JUDGER
+cpp_src_6 = """
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    ifstream fin("judge_in");
+    long long a,b,c;
+    fin >> a >> b;
+    cin >> c;
+    if (a * b == c)
+        cout << "wrong answer" << endl;
+    else cout << "ok" << endl;
+    return 0;
+}
+"""
+
 data = {
   "submissions":[
     {
       "id":100,
       "lang":"c",
-      "code":cpp_src
+      "code":cpp_src_4
     },
     {
       "id":101,
-      "lang":"p",
-      "code":"print('!')"
+      "lang":"c",
+      "code":cpp_src_5
     }
   ],
   "judge": {
@@ -73,7 +133,7 @@ class WebserverTest(unittest.TestCase):
         os.mkdir('/judge_server/round')
         os.mkdir('/judge_server/data')
         os.mkdir('/judge_server/data/1001')
-        os.mkdir('/judge_server/compile')
+
 
     # def test_compile_directly(self):
     #     submission = dict()
@@ -95,10 +155,11 @@ class WebserverTest(unittest.TestCase):
     def test_request(self):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data)
-        url = "http://127.0.0.1:4999/"
+        url = "http://127.0.0.1:4999/judge"
         res = requests.post(url, json=data).json()
         print(json.dumps(res))
         # return res
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,7 +4,7 @@ from config import *
 from core.handler import Handler
 
 
-@app.route('/', methods=['POST'])
+@app.route('/judge', methods=['POST'])
 def hello_world():
     if request.is_json:
         data = request.get_json()

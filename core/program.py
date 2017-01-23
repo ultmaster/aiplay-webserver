@@ -18,7 +18,7 @@ class Program(object):
         self.problem_id = config['problem_id']
         self.round_id = config['round_id']
         self.max_time = config['max_time']
-        self.max_memory = config['max_memory'] * 1048576 if self.lang != 'j' else -1
+        self.max_memory = config['max_memory']
         self.max_sum_time = config['max_sum_time']
 
         # Deal with directories
@@ -106,7 +106,7 @@ class Program(object):
         return dict(
             max_cpu_time=self.max_time,
             max_real_time=self.max_time * 2,
-            max_memory=self.max_memory,
+            max_memory=self.max_memory * 1048576 if self.lang != 'j' else -1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
             exe_path=self.run_cmd[0],
