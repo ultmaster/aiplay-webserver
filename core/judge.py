@@ -11,27 +11,21 @@ class Judge(Program):
         self.input_path = self.output_path
         self.output_path = os.path.join(self.round_dir, 'judge_result')
         self.judge_ans_path = os.path.join(self.round_dir, 'judge_ans')
-        self.judge_in_path = os.path.join(self.round_dir, 'judge_in')
+        self.judge_in_path = os.path.join(self.round_dir, 'in')
         self.judge_new_input_path = os.path.join(self.round_dir, 'judge_new_input')
+        self.seccomp_rule_name = None
+        self.base_run_cmd = self.run_cmd
+
+    def generate_default_run_cmd(self):
+        self.run_cmd = self.base_run_cmd
         self.run_cmd.append(self.judge_in_path)
         self.run_cmd.append(self.judge_ans_path)
         self.run_cmd.append(self.judge_new_input_path)
 
     def run(self, in_link=None, ans_link=None):
-        try:
-            assert ans_link is not None
-            if os.path.exists(self.judge_ans_path):
-                os.remove(self.judge_ans_path)
-            os.symlink(ans_link, self.judge_ans_path)
-        except (AssertionError, FileNotFoundError, FileExistsError):
-            open(self.judge_ans_path, "w+").close()
-
-        try:
-            assert in_link is not None
-            if os.path.exists(self.judge_in_path):
-                os.remove(self.judge_in_path)
-            os.symlink(in_link, self.judge_in_path)
-        except (AssertionError, FileNotFoundError, FileExistsError):
-            open(self.judge_in_path, "w+").close()
-
+        self.generate_default_run_cmd()
+        if in_link is not None:
+            self.run_cmd[-3] = in_link
+        if ans_link is not None:
+            self.run_cmd[-2] = ans_link
         super().run()

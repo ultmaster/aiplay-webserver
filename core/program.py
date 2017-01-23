@@ -14,6 +14,7 @@ class Program(object):
         self.code = submission['code']
         self.language_settings = LANGUAGE_SETTINGS[self.lang]
         self.score = 0
+        self.sum_score = 0
 
         # Restrictive settings
         self.problem_id = config['problem_id']
@@ -51,6 +52,7 @@ class Program(object):
         self.input_path = os.path.join(self.round_dir, 'in')
         self.output_path = os.path.join(self.round_dir, 'out')
         self.log_path = os.path.join(self.round_dir, 'run.log')
+        self.seccomp_rule_name = self.language_settings['seccomp_rule']
         self.run_cmd = self.language_settings['exe_cmd'].format(
             exe_path=self.exe_path,
             # The following is for Java
@@ -123,7 +125,7 @@ class Program(object):
             args=self.run_cmd[1:],
             env=[("PATH=" + os.getenv("PATH"))] + self.language_settings['env'],
             log_path=self.log_path,
-            seccomp_rule_name=self.language_settings['seccomp_rule'],
+            seccomp_rule_name=self.seccomp_rule_name,
             uid=0,  # not safe
             gid=0
         )

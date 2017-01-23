@@ -1,5 +1,6 @@
 from .program import Program
 from config import *
+from .utils import *
 
 # Tester: to test whether a submission is a valid submission
 class Tester(object):
@@ -18,13 +19,9 @@ class Tester(object):
     def test_compile(self):
         if not self.program.compile():
             self.error = 1
-            with open(self.program.compile_out_path, "r") as f:
-                self.message = f.read(1024)
+            self.message = read_partial_data_from_file(self.program.compile_out_path, 1024)
             if self.message == '':
-                with open(self.program.compile_log_path, "r") as f:
-                    self.message = f.read(1024)
-            if self.message >= 1023:
-                self.message += '\n......'
+                self.message = read_partial_data_from_file(self.program.compile_log_path, 1024)
             return False
         return True
 
