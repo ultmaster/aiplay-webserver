@@ -28,6 +28,14 @@ SPJ_EXE_DIR = "/spj"
 
 TOKEN_FILE_PATH = "/token.txt"
 
+COMPILE_ERROR = -2
+WRONG_ANSWER = -1
+CPU_TIME_LIMIT_EXCEEDED = 1
+REAL_TIME_LIMIT_EXCEEDED = 2
+MEMORY_LIMIT_EXCEEDED = 3
+RUNTIME_ERROR = 4
+SYSTEM_ERROR = 5
+
 app = Flask(__name__)
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'

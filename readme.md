@@ -63,6 +63,7 @@ judge_server
 We give exactly two more command line arguments, no matter you are using it or not.
 1. the original input path
 2. the answer path
+3. the new input path (rewrite)
 
 Recall that when you are using C++ or Python, the command arguments start from 1. But
 when using Java, command arguments start form 0.
@@ -83,7 +84,7 @@ Currently the following phrases are supported (we don't care about upper-lower c
 ```
 1. continue
 2. stop
-3. yes / right / correct (meaning score 100)
+3. ok / yes / right / correct (meaning score 100)
 4. no / wrong (meaning score 0)
 5. scored / scores / score <integer> (from 0 to 100)
 6. idleness limit exceeded (score 0)

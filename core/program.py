@@ -13,6 +13,7 @@ class Program(object):
         self.lang = submission['lang']
         self.code = submission['code']
         self.language_settings = LANGUAGE_SETTINGS[self.lang]
+        self.score = 0
 
         # Restrictive settings
         self.problem_id = config['problem_id']
@@ -64,15 +65,15 @@ class Program(object):
         if result["result"] != _judger.RESULT_SUCCESS:
             if not os.path.exists(self.compile_out_path):
                 with open(self.compile_out_path, 'w') as f:
-                    f.write("Error Code=" + result['error'])
+                    f.write("Error Code = " + result['error'])
             return False
-        else:
-            return True
+        return True
 
     def run(self):
         if not os.path.exists(self.input_path):
             open(self.input_path, "w").close()
         result = self._run()
+        self.max_sum_time -= result['cpu_time']
         print("Running Result of " + self.lang + ": " + str(result))
         return result
 
@@ -84,9 +85,9 @@ class Program(object):
 
     def _compile_args(self):
         return dict(
-            max_cpu_time=20 * 1000,
-            max_real_time=20 * 1000,
-            max_memory=128 * 1024 * 1024 if self.lang != 'j' else -1,
+            max_cpu_time=30 * 1000,
+            max_real_time=30 * 1000,
+            max_memory=-1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
             exe_path=self.compile_cmd[0],

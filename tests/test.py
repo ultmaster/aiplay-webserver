@@ -82,15 +82,19 @@ cpp_src_6 = """
 #include <bits/stdc++.h>
 using namespace std;
 
-int main()
+int main(int argc, char **argv)
 {
-    ifstream fin("judge_in");
+    ifstream fin(argv[1]);
+    ofstream fout(argv[3]);
     long long a,b,c;
     fin >> a >> b;
     cin >> c;
     if (a * b == c)
-        cout << "wrong answer" << endl;
-    else cout << "ok" << endl;
+        cout << "stop, wrong answer" << endl;
+    else {
+        cout << "continue, ok" << endl;
+        fout << c << " " << c - 1 << endl;
+    }
     return 0;
 }
 """
@@ -110,8 +114,8 @@ data = {
   ],
   "judge": {
     "id":200,
-    "lang":"j",
-    "code":"class Main { public static void main(String[] args) { } }"
+    "lang":"c",
+    "code":cpp_src_6
   },
   "config": {
     "problem_id":1001,
@@ -133,7 +137,8 @@ class WebserverTest(unittest.TestCase):
         os.mkdir('/judge_server/round')
         os.mkdir('/judge_server/data')
         os.mkdir('/judge_server/data/1001')
-
+        with open('/judge_server/data/1001/input.txt', 'w') as f:
+            f.write('3 2')
 
     # def test_compile_directly(self):
     #     submission = dict()

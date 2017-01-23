@@ -1,7 +1,9 @@
 import os
+from random import Random
 from .program import Program
 from .judge import Judge
-from config import DATA_DIR, ROUND_DIR
+from .tester import Tester
+from config import *
 
 class Handler(object):
     def __init__(self, data):
@@ -16,28 +18,41 @@ class Handler(object):
         for submission in submission_list:
             self.submissions.append(Program(submission, config))
         self.judge = Judge(data['judge'], config)
+        self.ready_for_input = os.path.join(self.round_dir, 'in')
 
     def control(self):
-        for f in os.listdir(DATA_DIR):
-            # List all input data
-            os.symlink(f, os.path.join(DATA_DIR, 'in'))
+        for file in os.listdir(DATA_DIR):
+            if os.path.exists(self.ready_for_input):
+                os.remove(self.ready_for_input)
+            os.symlink(file, self.ready_for_input)
+
 
 
     def run(self):
-        if not self.compile():
-            raise BaseException("Some accident just happened.")
-
+        # TEST
         for submission in self.submissions:
-            result = submission.run()
-            #if result["result"] != _judger.RESULT_SUCCESS:
-            #    return
-        self.judge.run()
+            test_result = Tester(submission).test()
+            if test_result['error'] != 0:
+                return test_result
+        test_result = Tester(self.judge).test()
+        if test_result['error'] != 0:
+            return test_result
 
-    def compile(self):
-        for submission in self.submissions:
-            if not submission.compile():
-                return False
-        if not self.judge.compile():
-            return False
-        return True
+        # Start Running
+        r = Random()
+        r.shuffle(self.submissions)
+        cnt = 0
+        while True:
+            running_result = self.submissions[cnt].run()
+            # Handle TLE
+            if self.submissions[cnt].max_sum_time < 0:
+                running_result['error'] = 1
+
+            # Cope with Judge
+            self.judge.run()
+
+            cnt = (cnt + 1) % len(self.submissions)
+
+
+
 

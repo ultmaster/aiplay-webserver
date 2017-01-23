@@ -5,7 +5,7 @@ from core.handler import Handler
 
 
 @app.route('/judge', methods=['POST'])
-def hello_world():
+def server_judge():
     if request.is_json:
         data = request.get_json()
         print(data)
