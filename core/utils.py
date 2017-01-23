@@ -4,3 +4,17 @@ def read_partial_data_from_file(filename, length):
     if len(result) >= length - 1:
         result += '\n......'
     return result
+
+def format_code_for_markdown(code):
+    code_length = len(code)
+    if code_length > 0:
+        start, end = 0, code_length - 1
+        while start < code_length and code[start] == '\n':
+            start += 1
+        while end >= 0 and code[end] == '\n':
+            end -= 1
+        if end < start:
+            return '\n\n'
+        else:
+            return '\n' + code[start:(end+1)] + '\n'
+    return '\n\n'

@@ -47,20 +47,21 @@ class Handler(object):
             # TODO: weight
             weight = 0
 
-            self.round_log.write('####Based on input data %s, data weight %d:\n\n' % (file, weight))
+            self.round_log.write('#### Based on input data %s, data weight %d:\n\n' % (file, weight))
 
             # Start Running
 
             r = Random()
             r.shuffle(self.submissions)
             cnt = 1
+            run_count = 1
 
             while True:
                 running_result = self.submissions[cnt].run()
 
                 # Save rundata
                 log_info = dict(
-                    cnt=cnt,
+                    cnt=run_count,
                     program=self.submissions[cnt].submission_id,
                     time=running_result['cpu_time'],
                     memory=running_result['memory'] // 1024,
@@ -91,29 +92,30 @@ class Handler(object):
 
                 # Write Log
                 log_info['result'] = ERROR_CODE[log_info['result']]
-                self.round_log.write('#####Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
+                self.round_log.write('##### Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
                                      'exit code: {exit_code}, running result: {result}, score: {score}. \n\n'
                                      .format(**log_info))
                 # DEBUG
                 print('Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
-                      'exit code: {exit_code}, running result: {result}, score: {score}. \n\n'
+                      'exit code: {exit_code}, running result: {result}, score: {score}. '
                       .format(**log_info))
-                self.round_log.write('**input:**\n```%s```\n' % in_data)
-                self.round_log.write('**output:**\n```%s```\n' % out_data)
-                self.round_log.write('**judge:**\n```%s```\n\n' % judge_data)
+                self.round_log.write('**input:**\n```%s```\n' % format_code_for_markdown(in_data))
+                self.round_log.write('**output:**\n```%s```\n' % format_code_for_markdown(out_data))
+                self.round_log.write('**judge:**\n```%s```\n\n' % format_code_for_markdown(judge_data))
 
                 # Deal with the game
                 self.submissions[cnt].score += log_info['score']
                 if not _continue:
                     # GAME OVER
-                    if cnt > 1:
-                        self.round_log.write('####Judge has called to an end for this round.\n')
+                    if run_count > 1:
+                        self.round_log.write('##### Judge has called an end to this round.\n')
                         for submission in self.submissions:
-                            self.round_log.write('#%d scored %d. '.format(submission.submission_id, submission.score))
+                            self.round_log.write('#%d scored %d. ' % (submission.submission_id, submission.score))
                         self.round_log.write('\n\n')
                     break
 
                 cnt = (cnt + 1) % len(self.submissions)
+                run_count += 1
 
     # Returning a dict of all the things to do
     def _judge_text_processing(self):
@@ -134,31 +136,30 @@ class Handler(object):
             text = ' '.join(text)
             text = text.lower()
 
-            if re.match(r'continue', text) is not None:
+            if re.search(r'continue', text) is not None:
                 result['continue'] = True
 
-            if re.match(r'stop', text) is not None:
+            if re.search(r'stop', text) is not None:
                 result['continue'] = False
 
-            if re.match(r'ok|yes|right|correct', text) is not None:
+            if re.search(r'ok|yes|right|correct', text) is not None:
                 result['score'] = 100
                 result['message'] = CORRECT
 
-            if re.match(r'no|wrong', text) is not None:
+            if re.search(r'no|wrong', text) is not None:
                 result['score'] = 0
                 result['message'] = WRONG_ANSWER
 
-            pattern = re.match(r'score[ds]? \d+', text)
+            pattern = re.search(r'score[ds]? \d+', text)
             if pattern is not None:
-                num = int(re.match(r'\d+', pattern.group()).group())
+                num = int(re.search(r'\d+', pattern.group()).group())
                 num = min(max(num, 0), 100)
                 result['score'] = num
                 result['message'] = OK
 
-            if re.match(r'idleness limit exceeded', text) is not None:
+            if re.search(r'idleness limit exceeded', text) is not None:
                 result['score'] = 0
                 result['continue'] = False
                 result['message'] = IDLENESS_LIMIT_EXCEEDED
 
-        print(result)
         return result
