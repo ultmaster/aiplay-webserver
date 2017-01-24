@@ -139,11 +139,12 @@ class Handler(object):
                 run_count += 1
 
             # Round complete
+            self.submissions.sort(key=lambda x: x.submission_id)
             if run_count > 1:
                 self.round_log.write('##### Judge has called an end to this round.\n')
                 for submission in self.submissions:
                     self.round_log.write('#%d time: %dms., memory: %dKB, score: %d.\n\n' % (
-                        submission.submission_id, submission.sum_time, submission.sum_memory, submission.score))
+                        submission.submission_id, submission.sum_time, submission.sum_memory // 1024, submission.score))
             for i in range(len(self.submissions)):
                 self.submissions[i].sum_score += int(self.submissions[i].score / 100 * weight)
 

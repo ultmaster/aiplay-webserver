@@ -3,6 +3,14 @@ from config import *
 from .languages import LANGUAGE_SETTINGS
 
 
+# For celery usage
+
+@celery.task
+def _celery_judger_run(args):
+    # args is dict
+    return _judger.run(**args)
+
+
 # This class is meant to deal with all difficulties when it comes to programs.
 # If initiated properly, you can simply use compile() and run() to run the program.
 class Program(object):
@@ -96,10 +104,10 @@ class Program(object):
         return result
 
     def _compile(self):
-        return _judger.run(**self._compile_args())
+        return _celery_judger_run.delay(self._compile_args()).get()
 
     def _run(self):
-        return _judger.run(**self._run_args())
+        return _celery_judger_run.delay(self._run_args()).get()
 
     def _compile_args(self):
         return dict(
