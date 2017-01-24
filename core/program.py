@@ -75,13 +75,23 @@ class Program(object):
         return True
 
     def run(self):
+        # Prevent input errors
         if not os.path.exists(self.input_path):
             open(self.input_path, "w").close()
         result = self._run()
+
+        # Sum time
         self.sum_time += result['cpu_time']
         self.sum_memory = max(self.sum_memory, result['memory'])
         if self.max_sum_time > 0 and self.sum_time > self.max_sum_time:
-            result['error'] = 1
+            result['result'] = SUM_TIME_LIMIT_EXCEEDED
+
+        # A fake one
+        if result['result'] == CPU_TIME_LIMIT_EXCEEDED or result['result'] == REAL_TIME_LIMIT_EXCEEDED:
+            result['time'] = self.max_time
+        if result['result'] == MEMORY_LIMIT_EXCEEDED:
+            result['memory'] = self.max_memory
+
         print("Running Result of " + self.lang + ": " + str(result))
         return result
 
@@ -94,7 +104,7 @@ class Program(object):
     def _compile_args(self):
         return dict(
             max_cpu_time=30 * 1000,
-            max_real_time=30 * 1000,
+            max_real_time=300 * 1000,
             max_memory=-1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
@@ -114,7 +124,7 @@ class Program(object):
     def _run_args(self):
         return dict(
             max_cpu_time=self.max_time,
-            max_real_time=self.max_time * 2,
+            max_real_time=self.max_time * 10,
             max_memory=self.max_memory * 1048576 if self.lang != 'j' else -1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,

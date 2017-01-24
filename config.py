@@ -44,6 +44,7 @@ SYSTEM_ERROR = 5
 COMPILE_ERROR = 6
 IDLENESS_LIMIT_EXCEEDED = 7
 PRETEST_FAILED = 8
+SUM_TIME_LIMIT_EXCEEDED = 9
 
 ERROR_CODE = {
     -3: 'Correct',
@@ -57,7 +58,8 @@ ERROR_CODE = {
     5: 'System Error',
     6: 'Compile Error',
     7: 'Idleness Limit Exceeded',
-    8: 'Pretest Failed'
+    8: 'Pretest Failed',
+    9: 'Sum Time Limit Exceeded'
 }
 
 app = Flask(__name__)

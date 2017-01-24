@@ -41,8 +41,6 @@ class Handler(object):
             if os.path.exists(self.ready_for_input):
                 os.remove(self.ready_for_input)
             os.symlink(os.path.join(self.data_dir, file), self.ready_for_input)
-            with open(os.path.join(self.data_dir, file), "r") as f:
-                print(f.read())
 
             # TODO: weight
             weight = 0
@@ -59,7 +57,7 @@ class Handler(object):
             while True:
                 running_result = self.submissions[cnt].run()
 
-                # Save rundata
+                # Save data
                 log_info = dict(
                     cnt=run_count,
                     program=self.submissions[cnt].submission_id,
@@ -92,16 +90,17 @@ class Handler(object):
 
                 # Write Log
                 log_info['result'] = ERROR_CODE[log_info['result']]
-                self.round_log.write('##### Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
-                                     'exit code: {exit_code}, running result: {result}, score: {score}. \n\n'
+                self.round_log.write('##### Run #{cnt} (submission #{program})\n'
+                                     '**time: {time}ms., memory: {memory}KB, '
+                                     'exit code: {exit_code}, verdict: {result}, score: {score}.**\n'
                                      .format(**log_info))
                 # DEBUG
-                print('Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
-                      'exit code: {exit_code}, running result: {result}, score: {score}. '
-                      .format(**log_info))
-                self.round_log.write('**input:**\n```%s```\n' % format_code_for_markdown(in_data))
-                self.round_log.write('**output:**\n```%s```\n' % format_code_for_markdown(out_data))
-                self.round_log.write('**judge:**\n```%s```\n\n' % format_code_for_markdown(judge_data))
+                # print('Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
+                #       'exit code: {exit_code}, running result: {result}, score: {score}. '
+                #       .format(**log_info))
+                self.round_log.write('input:\n```%s```\n' % format_code_for_markdown(in_data))
+                self.round_log.write('output:\n```%s```\n' % format_code_for_markdown(out_data))
+                self.round_log.write('judge:\n```%s```\n' % format_code_for_markdown(judge_data))
 
                 # Deal with the game
                 self.submissions[cnt].score += log_info['score']

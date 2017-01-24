@@ -22,10 +22,12 @@ class Judge(Program):
         self.run_cmd.append(self.judge_ans_path)
         self.run_cmd.append(self.judge_new_input_path)
 
-    def run(self, in_link=None, ans_link=None):
+    def run(self, in_link=None, ans_link=None, pretest=False):
         self.generate_default_run_cmd()
         if in_link is not None:
             self.run_cmd[-3] = in_link
         if ans_link is not None:
             self.run_cmd[-2] = ans_link
+        if pretest:
+            self.run_cmd.append('pretest')
         super().run()

@@ -64,6 +64,7 @@ We give exactly two more command line arguments, no matter you are using it or n
 1. the original input path
 2. the answer path
 3. the new input path (rewrite)
+4. whether it is for pretest (please check `argc` before doing this)
 
 Recall that when you are using C++ or Python, the command arguments start from 1. But
 when using Java, command arguments start form 0.
@@ -102,3 +103,7 @@ If there were to be some terrible accident that makes Judge unhappy and even ang
 don't worry, we will take care of that. Even if you don't write anything, it will still
 seems to be functioning properly. But we will post a notice about the accident
 and you have to do something about that.
+
+#### Pretest
+If you want programs to run some pretests before running on the main tests, in order to prevent ILE(?), you 
+then need to upload some pretest data. 

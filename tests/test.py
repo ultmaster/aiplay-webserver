@@ -100,6 +100,20 @@ int main(int argc, char **argv)
 }
 """
 
+# A*B Judger Python
+python_src_1 = """
+import os, sys
+newin = open(sys.argv[3], 'w')
+oldin = open(sys.argv[1], 'r')
+a, b = map(int, oldin.readline().split())
+c = int(input())
+if a * b != c:
+    print('stop, wrong answer')
+else:
+    print('continue, ok')
+    newin.write("%d %d\\n" % (c, c - 1))
+"""
+
 data = {
   "submissions":[
     {
@@ -115,8 +129,8 @@ data = {
   ],
   "judge": {
     "id":200,
-    "lang":"c",
-    "code":cpp_src_6
+    "lang":"p",
+    "code":python_src_1
   },
   "config": {
     "problem_id":1001,
