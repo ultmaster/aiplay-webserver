@@ -22,8 +22,16 @@ class Judge(Program):
         self.run_cmd.append(self.judge_ans_path)
         self.run_cmd.append(self.judge_new_input_path)
 
+    def generate_new_file_for_judge(self, path):
+        if not os.path.exists(path):
+            open(path, "w").close()
+        os.chmod(path, mode=0o666)
+
     def run(self, pretest=False):
         self.generate_default_run_cmd()
+        self.generate_new_file_for_judge(self.judge_in_path)
+        self.generate_new_file_for_judge(self.judge_ans_path)
+        self.generate_new_file_for_judge(self.judge_new_input_path)
         if pretest:
             self.run_cmd.append('pretest')
         super().run()

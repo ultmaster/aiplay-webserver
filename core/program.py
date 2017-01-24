@@ -63,7 +63,6 @@ class Program(object):
         ).split(' ')
 
     def compile(self):
-        # TODO if compile result exist
         with open(self.src_path, 'w') as f:
             f.write(self.code)
         result = self._compile()
@@ -118,7 +117,7 @@ class Program(object):
             env=[("PATH=" + os.getenv("PATH"))] + self.language_settings['env'],
             log_path=self.compile_log_path,
             seccomp_rule_name=None,
-            uid=0,
+            uid=0,  # not safe?
             gid=0
         )
 
@@ -137,6 +136,6 @@ class Program(object):
             env=[("PATH=" + os.getenv("PATH"))] + self.language_settings['env'],
             log_path=self.log_path,
             seccomp_rule_name=self.seccomp_rule_name,
-            uid=0,  # not safe
-            gid=0
+            uid=RUN_USER_UID,
+            gid=RUN_GROUP_GID
         )

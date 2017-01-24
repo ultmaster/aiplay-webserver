@@ -129,8 +129,8 @@ data = {
   ],
   "judge": {
     "id":200,
-    "lang":"p",
-    "code":python_src_1
+    "lang":"c",
+    "code":cpp_src_6
   },
   "config": {
     "problem_id":1001,

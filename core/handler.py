@@ -50,14 +50,15 @@ class Handler(object):
             ans_file = data[1]
             weight = data[2]
 
+            # use copy instead of link to prevent chmod problems
             if os.path.exists(self.input_path):
                 os.remove(self.input_path)
-            os.symlink(os.path.join(self.data_dir, input_file), self.input_path)
+            shutil.copyfile(os.path.join(self.data_dir, input_file), self.input_path)
 
             if os.path.exists(self.ans_path):
                 os.remove(self.ans_path)
             if ans_file is not None:
-                os.symlink(os.path.join(self.data_dir, ans_file), self.ans_path)
+                shutil.copyfile(os.path.join(self.data_dir, ans_file), self.ans_path)
 
             self.round_log.write('#### Based on input data %s, data weight %d:\n\n' % (input_file, weight))
 
@@ -87,7 +88,7 @@ class Handler(object):
                 )
                 in_data = read_partial_data_from_file(self.input_path, 1024)
                 out_data = read_partial_data_from_file(self.output_path, 1024)
-                judge_data = ''
+                judge_data = 'none'
 
                 _continue = False
 
@@ -105,6 +106,9 @@ class Handler(object):
                     if os.path.exists(self.input_path):
                         os.remove(self.input_path)
                     shutil.copyfile(self.judge.judge_new_input_path, self.input_path)
+
+                elif running_result['result'] == RUNTIME_ERROR:
+                    out_data = read_partial_data_from_file(self.judge.log_path, 1024)
 
                 # Write Log
                 log_info['result'] = ERROR_CODE[log_info['result']]
@@ -141,6 +145,9 @@ class Handler(object):
         self.round_log.write('##### Conclusion:\n')
         for submission in self.submissions:
             self.round_log.write('#%d has a total score of %d.\n\n' % (submission.submission_id, submission.sum_score))
+        for file in os.listdir(self.round_dir):
+            if file != 'round.log':
+                os.remove(os.path.join(self.round_dir, file))
 
     # Returning a dict of all the things to do
     def _judge_text_processing(self):
