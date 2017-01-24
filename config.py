@@ -28,7 +28,8 @@ SPJ_EXE_DIR = "/spj"
 
 TOKEN_FILE_PATH = "/token.txt"
 
-# ERROR_CODE < 0: FORGIVEN ERROR
+# ERROR_CODE < 0: FORGIVEN
+FINISHED = -100
 CORRECT = -3
 OK = -2
 WRONG_ANSWER = -1
@@ -47,6 +48,7 @@ PRETEST_FAILED = 8
 SUM_TIME_LIMIT_EXCEEDED = 9
 
 ERROR_CODE = {
+    -100: 'Finished',
     -3: 'Correct',
     -2: 'OK',
     -1: 'Wrong Answer',

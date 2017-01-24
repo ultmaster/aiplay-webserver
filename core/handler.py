@@ -25,17 +25,23 @@ class Handler(object):
         self.input_path = os.path.join(self.round_dir, 'in')
         self.output_path = os.path.join(self.round_dir, 'out')
         self.ans_path = os.path.join(self.round_dir, 'judge_ans')
+        self.round_log_path = os.path.join(self.round_dir, 'round.log')
 
-        self.round_log = open(os.path.join(self.round_dir, 'round.log'), "w")
+        self.round_log = open(self.round_log_path, "w")
+        self.dumped = False
 
     def run(self):
+        if self.dumped:
+            # WHAT THE HELL?
+            return { 'code': SYSTEM_ERROR }
+        self.dumped = True
         # TEST
         for submission in self.submissions:
             test_result = Tester(submission).test()
-            if test_result['error'] != ERROR_CODE[PRETEST_PASSED]:
+            if test_result['code'] != PRETEST_PASSED:
                 return test_result
         test_result = Tester(self.judge).test()
-        if test_result['error'] != ERROR_CODE[PRETEST_PASSED]:
+        if test_result['code'] != PRETEST_PASSED:
             return test_result
 
         # IMPORT DATA
@@ -142,12 +148,21 @@ class Handler(object):
                 self.submissions[i].sum_score += int(self.submissions[i].score / 100 * weight)
 
         # CLEAN UP
+        json_result = dict()
+        json_result['code'] = FINISHED
+        json_result['score'] = dict()
+
         self.round_log.write('##### Conclusion:\n')
         for submission in self.submissions:
             self.round_log.write('#%d has a total score of %d.\n\n' % (submission.submission_id, submission.sum_score))
+            json_result['score'][submission.submission_id] = submission.sum_score
         for file in os.listdir(self.round_dir):
             if file != 'round.log':
                 os.remove(os.path.join(self.round_dir, file))
+
+        self.round_log.close()
+        json_result['message'] = open(self.round_log_path, "r").read()
+        return json_result
 
     # Returning a dict of all the things to do
     def _judge_text_processing(self):

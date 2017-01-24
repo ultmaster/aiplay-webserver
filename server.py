@@ -6,12 +6,11 @@ from core.handler import Handler
 
 @app.route('/judge', methods=['POST'])
 def server_judge():
+    result = {'status': 'reject'}
     if request.is_json:
-        data = request.get_json()
-        print(data)
-        Handler(data).run()
-        return jsonify({'status': 'accept'})
-    return jsonify({'status': 'reject'})
+        result['status'] = 'received'
+        result.update(Handler(request.get_json()).run())
+    return jsonify(result)
 
 
 if __name__ == '__main__':
