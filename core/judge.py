@@ -1,5 +1,6 @@
-import os
+import os, re
 from .program import Program
+from config import *
 
 
 # This class is meant to deal with IO for judges
@@ -34,4 +35,54 @@ class Judge(Program):
         self.generate_new_file_for_judge(self.judge_new_input_path)
         if pretest:
             self.run_cmd.append('pretest')
+        else:
+            self.run_cmd.append('main')
         super().run()
+        return self._judge_text_processing()
+
+    # Returning a dict of all the things to do
+    def _judge_text_processing(self):
+        result = dict()
+
+        result['continue'] = False
+        result['score'] = 0
+        result['message'] = 0
+        result['data'] = ''
+
+        with open(self.output_path, "r") as f:
+            result['data'] = f.read()
+            raw_text = re.split(r'[^A-Za-z0-9]', result['data'])
+            text = []
+            for t in raw_text:
+                if t != '':
+                    text.append(t)
+            text = ' '.join(text)
+            text = text.lower()
+
+            if re.search(r'continue', text) is not None:
+                result['continue'] = True
+
+            if re.search(r'stop', text) is not None:
+                result['continue'] = False
+
+            if re.search(r'ok|yes|right|correct', text) is not None:
+                result['score'] = 100
+                result['message'] = CORRECT
+
+            if re.search(r'no|wrong', text) is not None:
+                result['score'] = 0
+                result['message'] = WRONG_ANSWER
+
+            pattern = re.search(r'score[ds]? \d+', text)
+            if pattern is not None:
+                num = int(re.search(r'\d+', pattern.group()).group())
+                num = min(max(num, 0), 100)
+                result['score'] = num
+                result['message'] = OK
+
+            if re.search(r'idleness limit exceeded', text) is not None:
+                result['score'] = 0
+                result['continue'] = False
+                result['message'] = IDLENESS_LIMIT_EXCEEDED
+
+        return result

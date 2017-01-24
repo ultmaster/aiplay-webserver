@@ -114,7 +114,7 @@ else:
     newin.write("%d %d\\n" % (c, c - 1))
 """
 
-data = {
+data_1 = {
   "submissions":[
     {
       "id":100,
@@ -154,6 +154,10 @@ class WebserverTest(unittest.TestCase):
         os.mkdir('/judge_server/data/1001')
         with open('/judge_server/data/1001/input.txt', 'w') as f:
             f.write('3 2')
+        os.mkdir('/judge_server/pretest')
+        os.mkdir('/judge_server/pretest/1001')
+        with open('/judge_server/pretest/1001/input1.txt', 'w') as f:
+            f.write('3 2')
 
     # def test_compile_directly(self):
     #     submission = dict()
@@ -174,9 +178,9 @@ class WebserverTest(unittest.TestCase):
 
     def test_request(self):
         kwargs = {"headers": {"Content-Type": "application/json"}}
-        kwargs["data"] = json.dumps(data)
+        kwargs["data"] = json.dumps(data_1)
         url = "http://127.0.0.1:4999/judge"
-        res = requests.post(url, json=data).json()
+        res = requests.post(url, json=data_1).json()
         print(json.dumps(res))
         # return res
 

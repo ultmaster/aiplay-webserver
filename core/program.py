@@ -19,6 +19,7 @@ class Program(object):
         # About this program
         self.submission_id = submission['id']
         self.lang = submission['lang']
+        # TODO: add builtin code
         self.code = submission['code']
         self.language_settings = LANGUAGE_SETTINGS[self.lang]
         self.score = 0

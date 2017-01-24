@@ -21,8 +21,7 @@ will all do.
 ## ROOT
 `su` before running everything
 ## JSON
-
-request json, result is written to file
+#### Request of main test
 ```json
 {
   "submissions":[
@@ -51,6 +50,10 @@ request json, result is written to file
   }
 }
 ```
+#### Request of pretest
+```json
+
+```
 ## Root structure:
 ```
 judge_server
@@ -64,7 +67,7 @@ We give exactly two more command line arguments, no matter you are using it or n
 1. the original input path
 2. the answer path
 3. the new input path (rewrite)
-4. whether it is for pretest (please check `argc` before doing this)
+4. `pretest` for pretests; `main` for opposite cases
 
 Recall that when you are using C++ or Python, the command arguments start from 1. But
 when using Java, command arguments start form 0.
