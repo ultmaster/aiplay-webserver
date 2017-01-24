@@ -115,6 +115,26 @@ else:
 """
 
 data_1 = {
+    "submission":{
+        "id":104,
+        "lang":"c",
+        "code":cpp_src_3
+    },
+    "judge": {
+        "id":200,
+        "lang":"c",
+        "code":cpp_src_6
+    },
+    "config": {
+        "problem_id":1001,
+        "round_id":1,
+        "max_time":1000,
+        "max_sum_time":10000,
+        "max_memory":256
+    }
+}
+
+data_2 = {
   "submissions":[
     {
       "id":100,
@@ -176,13 +196,19 @@ class WebserverTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_request(self):
+    def test_pretest(self):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data_1)
-        url = "http://127.0.0.1:4999/judge"
+        url = "http://127.0.0.1:4999/test"
         res = requests.post(url, json=data_1).json()
         print(json.dumps(res))
-        # return res
+
+    def test_judge(self):
+        kwargs = {"headers": {"Content-Type": "application/json"}}
+        kwargs["data"] = json.dumps(data_2)
+        url = "http://127.0.0.1:4999/judge"
+        res = requests.post(url, json=data_2).json()
+        print(json.dumps(res))
 
 
 if __name__ == '__main__':

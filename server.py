@@ -19,7 +19,7 @@ def server_test():
     result = {'status': 'reject'}
     if request.is_json:
         result['status'] = 'received'
-        result.update(Tester(request.get_json()).run())
+        result.update(Tester(request.get_json()).test())
     return jsonify(result)
 
 

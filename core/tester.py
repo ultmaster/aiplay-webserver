@@ -8,21 +8,21 @@ from .utils import *
 # Tester: to test whether a submission is a valid submission
 class Tester(object):
 
-    def __init__(self, arg_program, judge=None):
-        if isinstance(arg_program, Program):
-            # Come from handler
-            self.program = arg_program
-            self.judge = judge
-        else:
-            # Come from outside
-            self.program = Program(arg_program['submission'], arg_program['config'])
-            self.judge = Judge(arg_program['judge'], arg_program['config'])
+    def __init__(self, arg):
+        submission_info = arg.get('submission')
+        judge_info = arg.get('judge')
+        config = arg.get('config').copy()
+        config['round_id'] = str(uuid.uuid1())
+
+        self.program = Program(submission_info, config)
+        self.judge = Judge(judge_info, config) if judge_info is not None else None
         self.error = PRETEST_PASSED
         self.message = 'none'
 
+        self.round_id = config['round_id']
         self.pretest_dir = os.path.join(PRETEST_DIR, str(self.program.problem_id))
-        self.round_dir = os.path.join(ROUND_DIR, str(uuid.uuid1()))
-        os.mkdir(self.round_dir)
+        self.round_dir = os.path.join(ROUND_DIR, self.round_id)
+
         self.input_path = os.path.join(self.round_dir, 'in')
         self.ans_path = os.path.join(self.round_dir, 'judge_ans')
 
@@ -42,6 +42,12 @@ class Tester(object):
         return True
 
     def test_run(self):
+
+        if self.judge is None:
+            return True
+
+        if not self.judge.compile():
+            return False
 
         # IMPORT DATA
         data_list = import_data(self.pretest_dir)

@@ -13,37 +13,42 @@ class Handler(object):
     def __init__(self, data):
         submission_list = data['submissions']
         config = data['config']
-        self.problem_id = config['problem_id']
-        self.round_id = config['round_id']
-        self.data_dir = os.path.join(DATA_DIR, str(self.problem_id))
-        self.round_dir = os.path.join(ROUND_DIR, str(self.round_id))
 
         self.submissions = []
-        for submission in submission_list:
-            self.submissions.append(Program(submission, config))
-        self.judge = Judge(data['judge'], config)
-        self.input_path = os.path.join(self.round_dir, 'in')
-        self.output_path = os.path.join(self.round_dir, 'out')
-        self.ans_path = os.path.join(self.round_dir, 'judge_ans')
-        self.round_log_path = os.path.join(self.round_dir, 'round.log')
 
-        self.round_log = open(self.round_log_path, "w")
-        self.dumped = False
+        # TEST
+        self.test_result = Tester({'submission': data['judge'], 'config': config}).test()
+        self.judge = Judge(data['judge'], config)
+        if self.test_result['code'] == PRETEST_PASSED:
+            for submission in submission_list:
+                self.test_result = Tester({'submission': submission, 'config': config}).test()
+                if self.test_result['code'] == PRETEST_PASSED:
+                    self.submissions.append(Program(submission, config))
+                else:
+                    break
+
+        if self.test_result['code'] == PRETEST_PASSED:
+            self.problem_id = config['problem_id']
+            self.round_id = config['round_id']
+            self.data_dir = os.path.join(DATA_DIR, str(self.problem_id))
+            self.round_dir = os.path.join(ROUND_DIR, str(self.round_id))
+            self.input_path = os.path.join(self.round_dir, 'in')
+            self.output_path = os.path.join(self.round_dir, 'out')
+            self.ans_path = os.path.join(self.round_dir, 'judge_ans')
+            self.round_log_path = os.path.join(self.round_dir, 'round.log')
+
+            self.round_log = open(self.round_log_path, "w")
+            self.dumped = False
+
 
     def run(self):
+        if self.test_result['code'] != PRETEST_PASSED:
+            return self.test_result
+
         if self.dumped:
             # WHAT THE HELL?
             return { 'code': SYSTEM_ERROR }
         self.dumped = True
-        # TEST
-        test_result = Tester(self.judge).test()
-        if test_result['code'] != PRETEST_PASSED:
-            return test_result
-        for submission in self.submissions:
-            test_result = Tester(submission, self.judge).test()
-            if test_result['code'] != PRETEST_PASSED:
-                return test_result
-
 
         # IMPORT DATA
         data_list = import_data(self.data_dir)

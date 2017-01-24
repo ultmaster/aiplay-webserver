@@ -1,4 +1,5 @@
 import _judger
+import uuid
 from config import *
 from .languages import LANGUAGE_SETTINGS
 
