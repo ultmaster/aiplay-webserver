@@ -1,5 +1,3 @@
-import os
-import re
 import shutil
 from random import Random
 from .program import Program
@@ -11,14 +9,17 @@ from config import *
 
 class Handler(object):
     def __init__(self, data):
-        submission_list = data['submissions']
-        config = data['config']
-
+        submission_list = data.get('submissions')
+        config = randomize_config(data.get('config'))
+        judge = data.get('judge')
+        if judge['id'] < 0:
+            # It is a built-in judge
+            pass
         self.submissions = []
 
         # TEST
-        self.test_result = Tester({'submission': data['judge'], 'config': config}).test()
-        self.judge = Judge(data['judge'], config)
+        self.test_result = Tester({'submission': judge, 'config': config}).test()
+        self.judge = Judge(judge, config)
         if self.test_result['code'] == PRETEST_PASSED:
             for submission in submission_list:
                 self.test_result = Tester({'submission': submission, 'config': config}).test()

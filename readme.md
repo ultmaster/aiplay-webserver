@@ -45,14 +45,30 @@ will all do.
     "problem_id":1001,
     "max_time":1000,
     "max_sum_time":10000,
-    "max_memory":256,
-    "round_id":1
+    "max_memory":256
   }
 }
 ```
 #### Request of pretest
 ```json
-
+{
+    "submission":{
+        "id":104,
+        "lang":"c",
+        "code":"..."
+    },
+    "judge": {
+        "id":200,
+        "lang":"c",
+        "code":"..."
+    },
+    "config": {
+        "problem_id":1001,
+        "max_time":1000,
+        "max_sum_time":10000,
+        "max_memory":256
+    }
+}
 ```
 ## Root structure:
 ```
@@ -64,9 +80,13 @@ judge_server
 
 ## About Judge
 We give exactly two more command line arguments, no matter you are using it or not.
+
 1. the original input path
+
 2. the answer path
+
 3. the new input path (rewrite)
+
 4. `pretest` for pretests; `main` for opposite cases
 
 Recall that when you are using C++ or Python, the command arguments start from 1. But

@@ -1,5 +1,7 @@
-import re, os
+import re
+import os
 import json
+import uuid
 
 
 # Return a list of tuples containing inputs and corresponding outputs and weights
@@ -7,16 +9,16 @@ def import_data(path):
 
     def _find_a_integer_in_a_string(string):
         pat = re.search(r'\d+', string)
-        return (-1 if pat is None else int(pat.group()))
+        return -1 if pat is None else int(pat.group())
 
     def _my_sort(lst):
-        result = sorted(lst, key=lambda x : _find_a_integer_in_a_string(x[0]))
-        return sorted(result, key=lambda x : re.sub(r'\d+', '', x[0]))
+        res = sorted(lst, key=lambda x: _find_a_integer_in_a_string(x[0]))
+        return sorted(res, key=lambda x: re.sub(r'\d+', '', x[0]))
 
     def _search_a_list_for_string_ignore_case(lst, stg):
-        for i in range(len(lst)):
-            if stg.lower() == lst[i][0].lower():
-                return i
+        for it in range(len(lst)):
+            if stg.lower() == lst[it][0].lower():
+                return it
         return -1
     try:
         with open(os.path.join(path, 'data.conf'), 'r') as f:
@@ -25,9 +27,9 @@ def import_data(path):
         config = dict()
 
     raw_file_list = os.listdir(path)
-    file_list = [ (x, False) for x in raw_file_list ]
+    file_list = [(x, False) for x in raw_file_list]
     result = []
-    patterns = { r'.in$': [ '.out', '.ans' ], r'input' : [ 'output', 'answer' ] }
+    patterns = {r'.in$': ['.out', '.ans'], r'input': ['output', 'answer']}
 
     for (in_pattern, out_pattern) in patterns.items():
         for i in range(len(file_list)):
@@ -40,11 +42,11 @@ def import_data(path):
                     if find_result >= 0:
                         file_list[i] = (file_list[i][0], True)
                         file_list[find_result] = (file_list[find_result][0], True)
-                        result.append( (file_list[i][0], file_list[find_result][0], config.get(file_list[i][0], 10)) )
+                        result.append((file_list[i][0], file_list[find_result][0], config.get(file_list[i][0], 10)))
                         break
                 if not file_list[i][1]:
                     file_list[i] = (file_list[i][0], True)
-                    result.append( (file_list[i][0], None, config.get(file_list[i][0], 10)) )
+                    result.append((file_list[i][0], None, config.get(file_list[i][0], 10)))
 
     result = _my_sort(result)
     return result
@@ -56,6 +58,7 @@ def read_partial_data_from_file(filename, length):
     if len(result) >= length - 1:
         result += '\n......'
     return result
+
 
 def format_code_for_markdown(code):
     code_length = len(code)
@@ -70,3 +73,9 @@ def format_code_for_markdown(code):
         else:
             return '\n' + code[start:(end+1)] + '\n'
     return '\n\n'
+
+
+def randomize_config(config):
+    new_config = config.copy()
+    new_config['round_id'] = str(uuid.uuid1())
+    return new_config

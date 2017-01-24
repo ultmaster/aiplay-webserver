@@ -127,7 +127,6 @@ data_1 = {
     },
     "config": {
         "problem_id":1001,
-        "round_id":1,
         "max_time":1000,
         "max_sum_time":10000,
         "max_memory":256
@@ -154,7 +153,6 @@ data_2 = {
   },
   "config": {
     "problem_id":1001,
-    "round_id":1,
     "max_time":1000,
     "max_sum_time":10000,
     "max_memory":256

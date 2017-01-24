@@ -11,8 +11,7 @@ class Tester(object):
     def __init__(self, arg):
         submission_info = arg.get('submission')
         judge_info = arg.get('judge')
-        config = arg.get('config').copy()
-        config['round_id'] = str(uuid.uuid1())
+        config = randomize_config(arg.get('config'))
 
         self.program = Program(submission_info, config)
         self.judge = Judge(judge_info, config) if judge_info is not None else None
