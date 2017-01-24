@@ -22,8 +22,9 @@ class Handler(object):
         for submission in submission_list:
             self.submissions.append(Program(submission, config))
         self.judge = Judge(data['judge'], config)
-        self.ready_for_input = os.path.join(self.round_dir, 'in')
-        self.ready_for_output = os.path.join(self.round_dir, 'out')
+        self.input_path = os.path.join(self.round_dir, 'in')
+        self.output_path = os.path.join(self.round_dir, 'out')
+        self.ans_path = os.path.join(self.round_dir, 'judge_ans')
 
         self.round_log = open(os.path.join(self.round_dir, 'round.log'), "w")
 
@@ -37,20 +38,37 @@ class Handler(object):
         if test_result['error'] != ERROR_CODE[PRETEST_PASSED]:
             return test_result
 
-        for file in os.listdir(self.data_dir):
-            if os.path.exists(self.ready_for_input):
-                os.remove(self.ready_for_input)
-            os.symlink(os.path.join(self.data_dir, file), self.ready_for_input)
+        # IMPORT DATA
+        data_list = import_data(self.data_dir)
 
-            # TODO: weight
-            weight = 0
+        # INIT
+        for i in range(len(self.submissions)):
+            self.submissions[i].sum_score = 0
 
-            self.round_log.write('#### Based on input data %s, data weight %d:\n\n' % (file, weight))
+        for data in data_list:
+            input_file = data[0]
+            ans_file = data[1]
+            weight = data[2]
+
+            if os.path.exists(self.input_path):
+                os.remove(self.input_path)
+            os.symlink(os.path.join(self.data_dir, input_file), self.input_path)
+
+            if os.path.exists(self.ans_path):
+                os.remove(self.ans_path)
+            if ans_file is not None:
+                os.symlink(os.path.join(self.data_dir, ans_file), self.ans_path)
+
+            self.round_log.write('#### Based on input data %s, data weight %d:\n\n' % (input_file, weight))
 
             # Start Running
 
             r = Random()
             r.shuffle(self.submissions)
+            for i in range(len(self.submissions)):
+                self.submissions[i].score = 0
+                self.submissions[i].sum_time = 0
+                self.submissions[i].sum_memory = 0
             cnt = 1
             run_count = 1
 
@@ -67,8 +85,8 @@ class Handler(object):
                     score=0,
                     result=running_result['result']
                 )
-                in_data = read_partial_data_from_file(self.ready_for_input, 1024)
-                out_data = read_partial_data_from_file(self.ready_for_output, 1024)
+                in_data = read_partial_data_from_file(self.input_path, 1024)
+                out_data = read_partial_data_from_file(self.output_path, 1024)
                 judge_data = ''
 
                 _continue = False
@@ -84,15 +102,15 @@ class Handler(object):
                     judge_data = judge_result['data']
 
                     # New input
-                    if os.path.exists(self.ready_for_input):
-                        os.remove(self.ready_for_input)
-                    shutil.copyfile(self.judge.judge_new_input_path, self.ready_for_input)
+                    if os.path.exists(self.input_path):
+                        os.remove(self.input_path)
+                    shutil.copyfile(self.judge.judge_new_input_path, self.input_path)
 
                 # Write Log
                 log_info['result'] = ERROR_CODE[log_info['result']]
                 self.round_log.write('##### Run #{cnt} (submission #{program})\n'
                                      '**time: {time}ms., memory: {memory}KB, '
-                                     'exit code: {exit_code}, verdict: {result}, score: {score}.**\n'
+                                     'exit code: {exit_code}, verdict: {result}, raw score: {score}.**\n'
                                      .format(**log_info))
                 # DEBUG
                 # print('Run #{cnt}: submission: #{program}, time: {time}ms., memory: {memory}KB, '
@@ -105,16 +123,24 @@ class Handler(object):
                 # Deal with the game
                 self.submissions[cnt].score += log_info['score']
                 if not _continue:
-                    # GAME OVER
-                    if run_count > 1:
-                        self.round_log.write('##### Judge has called an end to this round.\n')
-                        for submission in self.submissions:
-                            self.round_log.write('#%d scored %d. ' % (submission.submission_id, submission.score))
-                        self.round_log.write('\n\n')
                     break
 
                 cnt = (cnt + 1) % len(self.submissions)
                 run_count += 1
+
+            # Round complete
+            if run_count > 1:
+                self.round_log.write('##### Judge has called an end to this round.\n')
+                for submission in self.submissions:
+                    self.round_log.write('#%d time: %dms., memory: %dKB, score: %d.\n\n' % (
+                        submission.submission_id, submission.sum_time, submission.sum_memory, submission.score))
+            for i in range(len(self.submissions)):
+                self.submissions[i].sum_score += int(self.submissions[i].score / 100 * weight)
+
+        # CLEAN UP
+        self.round_log.write('##### Conclusion:\n')
+        for submission in self.submissions:
+            self.round_log.write('#%d has a total score of %d.\n\n' % (submission.submission_id, submission.sum_score))
 
     # Returning a dict of all the things to do
     def _judge_text_processing(self):

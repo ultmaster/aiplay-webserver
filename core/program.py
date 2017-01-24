@@ -24,6 +24,7 @@ class Program(object):
         self.max_sum_time = config['max_sum_time']
 
         self.sum_time = 0
+        # if you call it max, it is ok.
         self.sum_memory = 0
 
         # Deal with directories
