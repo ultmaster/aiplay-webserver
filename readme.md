@@ -106,4 +106,24 @@ and you have to do something about that.
 
 #### Pretest
 If you want programs to run some pretests before running on the main tests, in order to prevent ILE(?), you 
-then need to upload some pretest data. 
+then need to upload some pretest data.
+
+#### Data directory format:
+Input file should contain 'input' or use suffix name '.in'. Output file should contain 'output', 'answer' or use
+suffix name '.out' or '.ans'. Bound input and output files should be exactly same except the differences mentioned
+above. You should definitely not use name like 'input' for an output file to prevent potential errors.
+
+I really hate IGNORE_CASE problem. Sometimes it does; sometimes it does not. Leave me alone...
+
+#### Weight on each test case
+It means that each test case can have a weight when summing up. The default value is 10, meaning that
+participants will get a score on the scale of 0 to 10 in this test case. This value can be customized,
+by adding `data.conf` into following into data directory:
+```json
+{
+  "input1.txt": 20,
+  "input2.txt": 30,
+  "input3.txt": 50
+}
+```
+I was 
