@@ -1,7 +1,18 @@
 # AI Playground Webserver
 
 ## Preparation (obscure)
-
+### ROOT
+`su` before running everything
+### Important: install judger and testlib
+##### Install judger
+```
+cd include/judger && ./runtest.sh
+```
+Note: it is ok if you fail in 1-2 tests.
+##### Install testlib
+```
+cd include/testlib && python setup.py install
+```
 ```
 pip install -r requirements.txt
 sudo apt-get install redis-server
@@ -18,8 +29,7 @@ There is also directories needed to create. I included them in `setup.py`. In th
 `sudo python3 setup.py`
 will all do.
 
-## ROOT
-`su` before running everything
+
 ## JSON
 #### Request of main test
 ```json
@@ -41,6 +51,10 @@ will all do.
     "lang":"j",
     "code":"class Main { public static void main() { } }"
   },
+  "pretest_judge": {
+    "id":-1,
+    "lang":"ncmp"
+  },
   "config": {
     "problem_id":1001,
     "max_time":1000,
@@ -49,6 +63,7 @@ will all do.
   }
 }
 ```
+Note that pretest judge is optional. We will use judge for default.
 #### Request of pretest
 ```json
 {

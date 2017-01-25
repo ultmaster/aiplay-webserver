@@ -12,13 +12,11 @@ class Handler(object):
         submission_list = data.get('submissions')
         config = randomize_config(data.get('config'))
         judge = data.get('judge')
-        if judge['id'] < 0:
-            # It is a built-in judge
-            pass
         self.submissions = []
 
         # TEST
-        self.test_result = Tester({'submission': judge, 'config': config}).test()
+        if judge['id'] != BUILTIN_JUDGE:
+            self.test_result = Tester({'submission': judge, 'config': config}).test()
         self.judge = Judge(judge, config)
         if self.test_result['code'] == PRETEST_PASSED:
             for submission in submission_list:
