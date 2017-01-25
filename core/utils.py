@@ -75,7 +75,5 @@ def format_code_for_markdown(code):
     return '\n\n'
 
 
-def randomize_config(config):
-    new_config = config.copy()
-    new_config['round_id'] = str(uuid.uuid1())
-    return new_config
+def randomize_round_id():
+    return str(uuid.uuid1())

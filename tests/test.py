@@ -6,6 +6,7 @@ import requests
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from server import *
+from core.program import Program
 import unittest
 
 # Correct A+B
@@ -205,47 +206,56 @@ class WebserverTest(unittest.TestCase):
         with open('/judge_server/pretest/1001/input1.txt', 'w') as f:
             f.write('3 2')
 
-    # def test_compile_directly(self):
-    #     submission = dict()
-    #     submission["id"] = 100
-    #     submission["lang"] = 'c'
-    #     submission["code"] = cpp_src
-    #     try_to_compile(submission)
-    #
-    # def test_compile_wrong_directly(self):
-    #     submission = dict()
-    #     submission["id"] = 101
-    #     submission["lang"] = 'c'
-    #     submission["code"] = cpp_wrong_src
-    #     try_to_compile(submission)
-
     def tearDown(self):
         pass
 
-    def test_pretest(self):
+    def send_pretest(self, data):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data_1)
         url = "http://127.0.0.1:4999/test"
-        res = requests.post(url, json=data_1).json()
+        res = requests.post(url, json=data).json()
         print(json.dumps(res))
-        self.assertEqual(res['code'], PRETEST_PASSED)
+        self.assertEqual(res['code'], PRETEST_PASSED, 'Pretest Failed. ' + json.dumps(res))
 
     def test_judge_cpp(self):
-        self._judge(data_1)
+        self.send_judge(data_3)
 
     def test_judge_python(self):
-        self._judge(data_2)
+        self.send_judge(data_2)
 
-    def _judge(self, data):
+    def send_judge(self, data):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data_2)
         url = "http://127.0.0.1:4999/judge"
         res = requests.post(url, json=data_2).json()
         print(json.dumps(res))
-        self.assertEqual(res['code'], FINISHED)
+        self.assertEqual(res['code'], FINISHED, json.dumps(res))
         for score in res['score'].values():
-            self.assertGreaterEqual(score, 20, 'Basic Test Judge Failed.')
+            self.assertGreaterEqual(score, 20, 'Basic Test Judge Failed. ' + json.dumps(res))
 
+    def test_pretest(self):
+        self.send_pretest(data_1)
+
+    def test_language_cpp(self):
+        data = dict(
+            submission={'id': 2000, 'lang': 'c', 'code': open('test_src/language/c.cpp').read()},
+            config={'problem_id': 1001}
+        )
+        self.send_pretest(data)
+
+    def test_language_java(self):
+        data = dict(
+            submission={'id': 2001, 'lang': 'j', 'code': open('test_src/language/j.java').read()},
+            config={'problem_id': 1001}
+        )
+        self.send_pretest(data)
+
+    def test_language_python(self):
+        data = dict(
+            submission={'id': 2002, 'lang': 'p', 'code': open('test_src/language/p.py').read()},
+            config={'problem_id': 1001}
+        )
+        self.send_pretest(data)
 
 if __name__ == '__main__':
     unittest.main()

@@ -10,25 +10,25 @@ from config import *
 class Handler(object):
     def __init__(self, data):
         submission_list = data.get('submissions')
-        config = randomize_config(data.get('config'))
+        config = data.get('config', dict())
         judge = data.get('judge')
+        self.round_id = randomize_round_id()
         self.submissions = []
 
         # TEST
         if judge['id'] != BUILTIN_JUDGE:
             self.test_result = Tester({'submission': judge, 'config': config}).test()
-        self.judge = Judge(judge, config)
+        self.judge = Judge(judge, config, self.round_id)
         if self.test_result['code'] == PRETEST_PASSED:
             for submission in submission_list:
                 self.test_result = Tester({'submission': submission, 'config': config}).test()
                 if self.test_result['code'] == PRETEST_PASSED:
-                    self.submissions.append(Program(submission, config))
+                    self.submissions.append(Program(submission, config, self.round_id))
                 else:
                     break
 
         if self.test_result['code'] == PRETEST_PASSED:
             self.problem_id = config['problem_id']
-            self.round_id = config['round_id']
             self.data_dir = os.path.join(DATA_DIR, str(self.problem_id))
             self.round_dir = os.path.join(ROUND_DIR, str(self.round_id))
             self.input_path = os.path.join(self.round_dir, 'in')

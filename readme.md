@@ -3,28 +3,29 @@
 ## Preparation (obscure)
 ### ROOT
 `su` before running everything
-### Important: install judger and testlib
-##### Install judger
+### Important: install judger
 ```
 cd include/judger && ./runtest.sh
 ```
+**Done!**
+
 Note: it is ok if you fail in 1-2 tests.
-##### Install testlib
-```
-cd include/testlib && python setup.py install
-```
+### Requirements
 ```
 pip install -r requirements.txt
 sudo apt-get install redis-server
-redis-server
 ```
 ```
-celery worker -A config.celery --loglevel=info
-```
-```
+# not using yet
 sudo groupadd compiler
 sudo useradd -g compiler compiler
 ```
+### Do this before you run things
+```
+redis-server (working backstage if you prefer)
+celery worker -A config.celery --loglevel=info
+```
+### Future plans
 There is also directories needed to create. I included them in `setup.py`. In the future, I hope
 `sudo python3 setup.py`
 will all do.
@@ -85,12 +86,13 @@ Note that pretest judge is optional. We will use judge for default.
     }
 }
 ```
-## Root structure:
+## Judge working structure
 ```
 judge_server
 |- submission
 |- round
 |- data
+|- pretest
 ```
 
 ## About Judge
@@ -111,7 +113,7 @@ Note that you can only read the output from `stdin` and write the conclusion to 
 
 Now let's talk about the protocol Judge should follow when writing conclusions.
 
-#### Judge Protocols
+### Judge Protocols
 Judge should write exactly one line to `stdout`. As the sentence would be revealed to
 user, you probably don't want your sentence to be obscure...
 
@@ -142,18 +144,18 @@ don't worry, we will take care of that. Even if you don't write anything, it wil
 seems to be functioning properly. But we will post a notice about the accident
 and you have to do something about that.
 
-#### Pretest
+### Pretest
 If you want programs to run some pretests before running on the main tests, in order to prevent ILE(?), you 
 then need to upload some pretest data.
 
-#### Data directory format:
+### Data directory format:
 Input file should contain 'input' or use suffix name '.in'. Output file should contain 'output', 'answer' or use
 suffix name '.out' or '.ans'. Bound input and output files should be exactly same except the differences mentioned
 above. You should definitely not use name like 'input' for an output file to prevent potential errors.
 
 I really hate IGNORE_CASE problem. Sometimes it does; sometimes it does not. Leave me alone...
 
-#### Weight on each test case
+### Weight on each test case
 It means that each test case can have a weight when summing up. The default value is 10, meaning that
 participants will get a score on the scale of 0 to 10 in this test case. This value can be customized,
 by adding `data.conf` into following into data directory:
@@ -164,4 +166,3 @@ by adding `data.conf` into following into data directory:
   "input3.txt": 50
 }
 ```
-I was 

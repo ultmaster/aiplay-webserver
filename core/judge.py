@@ -6,8 +6,8 @@ from config import *
 # This class is meant to deal with IO for judges
 # No further explanations...
 class Judge(Program):
-    def __init__(self, submission, config):
-        super().__init__(submission, config)
+    def __init__(self, submission, config, round_id):
+        super().__init__(submission, config, round_id)
 
         self.input_path = self.output_path
         self.output_path = os.path.join(self.round_dir, 'judge_result')

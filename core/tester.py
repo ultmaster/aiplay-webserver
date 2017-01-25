@@ -11,14 +11,14 @@ class Tester(object):
     def __init__(self, arg):
         submission_info = arg.get('submission')
         judge_info = arg.get('judge')
-        config = randomize_config(arg.get('config'))
+        config = arg.get('config', dict())
 
-        self.program = Program(submission_info, config)
-        self.judge = Judge(judge_info, config) if judge_info is not None else None
+        self.round_id = randomize_round_id()
+        self.program = Program(submission_info, config, self.round_id)
+        self.judge = Judge(judge_info, config, self.round_id) if judge_info is not None else None
         self.error = PRETEST_PASSED
         self.message = 'none'
 
-        self.round_id = config['round_id']
         self.pretest_dir = os.path.join(PRETEST_DIR, str(self.program.problem_id))
         self.round_dir = os.path.join(ROUND_DIR, self.round_id)
 
@@ -42,15 +42,16 @@ class Tester(object):
 
     def test_run(self):
 
-        if self.judge is None:
-            return True
-
         if not self.judge.compile():
             return False
 
+        sum_score = 0
+        if self.judge is None:
+            sum_score = 100
+
         # IMPORT DATA
         data_list = import_data(self.pretest_dir)
-        sum_score = 0
+
 
         for data in data_list:
             input_file = data[0]
@@ -66,11 +67,13 @@ class Tester(object):
                 shutil.copyfile(os.path.join(self.pretest_dir, ans_file), self.ans_path)
 
             running_result = self.program.run()
-            judge_result = self.judge.run(pretest=True)
-            sum_score += judge_result['score']
 
-            if running_result['result'] > 0:  # fatal error
-                self.error = PRETEST_FAILED
+            if self.judge is not None:
+                judge_result = self.judge.run(pretest=True)
+                sum_score += judge_result['score']
+
+                if running_result['result'] > 0:  # fatal error
+                    self.error = PRETEST_FAILED
 
         if len(data_list) > 0 and sum_score == 0:
             self.error = PRETEST_FAILED
