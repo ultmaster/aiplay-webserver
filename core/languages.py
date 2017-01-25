@@ -1,7 +1,3 @@
-from config import SUBMISSION_DIR, COMPILE_DIR
-import os
-
-
 LANGUAGE_SETTINGS = dict(
     c = {
         "src_name": "main.cpp",
@@ -33,5 +29,3 @@ LANGUAGE_SETTINGS = dict(
         "env": []
     }
 )
-
-

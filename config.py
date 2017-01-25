@@ -16,6 +16,7 @@ COMPILE_DIR = '/judge_server/compile'
 ROUND_DIR = '/judge_server/round'
 DATA_DIR = '/judge_server/data'
 PRETEST_DIR = '/judge_server/pretest'
+INCLUDE_DIR = '/judge_server/include'
 
 RUN_USER_UID = pwd.getpwnam("nobody").pw_uid
 RUN_GROUP_GID = grp.getgrnam("nogroup").gr_gid

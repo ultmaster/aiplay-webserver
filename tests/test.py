@@ -80,6 +80,7 @@ int main()
 # A*B JUDGER
 cpp_src_6 = """
 #include <bits/stdc++.h>
+#include <testlib/test.h>
 using namespace std;
 
 int main(int argc, char **argv)
@@ -102,7 +103,7 @@ int main(int argc, char **argv)
 
 # A*B Judger Python
 python_src_1 = """
-import os, sys
+import os, sys, testlib
 newin = open(sys.argv[3], 'w')
 oldin = open(sys.argv[1], 'r')
 a, b = map(int, oldin.readline().split())
@@ -166,6 +167,7 @@ class WebserverTest(unittest.TestCase):
         if os.path.exists('/judge_server'):
             shutil.rmtree('/judge_server')
         os.mkdir('/judge_server')
+        shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
         os.mkdir('/judge_server/submission')
         os.mkdir('/judge_server/round')
         os.mkdir('/judge_server/data')
@@ -200,6 +202,7 @@ class WebserverTest(unittest.TestCase):
         url = "http://127.0.0.1:4999/test"
         res = requests.post(url, json=data_1).json()
         print(json.dumps(res))
+        self.assertEqual(res['code'], PRETEST_PASSED)
 
     def test_judge(self):
         kwargs = {"headers": {"Content-Type": "application/json"}}
@@ -207,6 +210,9 @@ class WebserverTest(unittest.TestCase):
         url = "http://127.0.0.1:4999/judge"
         res = requests.post(url, json=data_2).json()
         print(json.dumps(res))
+        self.assertEqual(res['code'], FINISHED)
+        for score in res['score'].values():
+            self.assertGreaterEqual(score, 20, 'Basic Test Judge Failed.')
 
 
 if __name__ == '__main__':

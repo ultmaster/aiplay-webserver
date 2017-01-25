@@ -25,6 +25,16 @@ celery worker -A config.celery --loglevel=info
 sudo groupadd compiler
 sudo useradd -g compiler compiler
 ```
+Add the following to `/etc/profile`:
+```
+export C_INCLUDE_PATH=$C_INCLUDE_PATH$:/judge_server/include
+export PYTHON_PATH=$PYTHON_PATH$:/judge_server/include
+export CLASSPATH=??? (for java)
+```
+then:
+```
+source /etc/profile
+```
 There is also directories needed to create. I included them in `setup.py`. In the future, I hope
 `sudo python3 setup.py`
 will all do.

@@ -1,6 +1,7 @@
-import os
+import os, sys
 
 try:
+    sys.path.count('/judge_server/include')
     os.mkdir('/aipWebserver')
     os.mkdir('/aipWebserver/submission')
     os.mkdir('/aipWebserver/round')
