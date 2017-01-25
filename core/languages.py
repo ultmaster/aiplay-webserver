@@ -1,14 +1,16 @@
+from config import *
+
 LANGUAGE_SETTINGS = dict(
-    c = {
+    c={
         "src_name": "main.cpp",
         "exe_name": "main",
         "max_memory": 128 * 1024 * 1024,
         "compile_cmd": "/usr/bin/g++ -DONLINE_JUDGE -O2 -w -fmax-errors=3 -std=c++11 {src_path} -lm -o {exe_path}",
         "exe_cmd": "{exe_path}",
         "seccomp_rule": "c_cpp",
-        "env": []
+        "env": [("CPLUS_INCLUDE_PATH=" + INCLUDE_DIR)]
     },
-    j = {
+    j={
         "src_name": "Main.java",
         "exe_name": "Main",
         "max_memory": -1,
@@ -18,7 +20,7 @@ LANGUAGE_SETTINGS = dict(
         "seccomp_rule": None,
         "env": ["MALLOC_ARENA_MAX=1"]
     },
-    p = {
+    p={
         # A Naive solution of copy
         "src_name": "solution.py",
         "exe_name": "solution.py",  # TODO assign exe_path when compile
@@ -26,6 +28,6 @@ LANGUAGE_SETTINGS = dict(
         "compile_cmd": "/usr/bin/python3 -m py_compile {src_path}",
         "exe_cmd": "/usr/bin/python3 {exe_path}",
         "seccomp_rule": None,
-        "env": []
+        "env": [("PYTHONPATH=" + INCLUDE_DIR)]
     }
 )

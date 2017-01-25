@@ -148,6 +148,32 @@ data_2 = {
     }
   ],
   "judge": {
+    "id":201,
+    "lang":"p",
+    "code":python_src_1
+  },
+  "config": {
+    "problem_id":1001,
+    "max_time":1000,
+    "max_sum_time":10000,
+    "max_memory":256
+  }
+}
+
+data_3 = {
+  "submissions":[
+    {
+      "id":100,
+      "lang":"c",
+      "code":cpp_src_4
+    },
+    {
+      "id":101,
+      "lang":"c",
+      "code":cpp_src_5
+    }
+  ],
+  "judge": {
     "id":200,
     "lang":"c",
     "code":cpp_src_6
@@ -204,7 +230,13 @@ class WebserverTest(unittest.TestCase):
         print(json.dumps(res))
         self.assertEqual(res['code'], PRETEST_PASSED)
 
-    def test_judge(self):
+    def test_judge_cpp(self):
+        self._judge(data_1)
+
+    def test_judge_python(self):
+        self._judge(data_2)
+
+    def _judge(self, data):
         kwargs = {"headers": {"Content-Type": "application/json"}}
         kwargs["data"] = json.dumps(data_2)
         url = "http://127.0.0.1:4999/judge"
