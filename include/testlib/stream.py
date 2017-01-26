@@ -9,6 +9,7 @@ def format_found_token(token):
         res = token[:32] + '...'
     else:
         res = token
+    res = re.sub(r'\s', ' ', res)
     return "'" + res.replace("'", '"') + "'"
 
 

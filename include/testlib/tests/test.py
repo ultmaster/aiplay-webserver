@@ -3,6 +3,8 @@ from os import path
 
 from testlib import *
 from testlib.checker import float_cmp, float_ocmp, float_ncmp
+from testlib.checker import int_cmp, int_ocmp, int_ncmp
+from testlib.checker import file_cmp
 
 data_dir = path.join(path.dirname(path.abspath(__file__)), 'data')
 res_path = path.join(data_dir, 'test.log')
@@ -105,6 +107,18 @@ class TestlibTest(unittest.TestCase):
         res = open(res_path).readline()
         print(res)
         self.assertRegex(res, r'^wrong')
+
+    def test_int_cmp(self):
+        int_ocmp.int_ocmp(path.join(data_dir, 'int_cmp.out'), path.join(data_dir, 'int_cmp.ans'), res_path)
+        self.assertRegex(open(res_path).readline(), r'^wrong')
+        int_ncmp.int_ncmp(path.join(data_dir, 'int_ncmp.out'), path.join(data_dir, 'int_ncmp.ans'), res_path)
+        self.assertRegex(open(res_path).readline(), r'^ok')
+        int_cmp.int_cmp(path.join(data_dir, 'int_ncmp.out'), path.join(data_dir, 'int_ncmp.ans'), res_path)
+        self.assertRegex(open(res_path).readline(), r'^ok')
+
+    def test_file_cmp(self):
+        file_cmp.file_cmp(path.join(data_dir, 'file_cmp.out'), path.join(data_dir, 'file_cmp.ans'), res_path)
+        self.assertRegex(open(res_path).readline(), r'^ok')
 
 if __name__ == '__main__':
     unittest.main()

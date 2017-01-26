@@ -62,6 +62,12 @@ class InconsistentIntegersError(InconsistentError):
         self.detail = '%d expected, %d found' % (expected, real)
 
 
+class InconsistentTokensError(InconsistentError):
+    def __init__(self, expected, real, line):
+        super().__init__(line)
+        self.detail = '%s expected, %s found' % (expected, real)
+
+
 class UnexpectedAnswerError(JudgeException):
 
     def __init__(self):
