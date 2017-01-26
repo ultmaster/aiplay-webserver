@@ -89,6 +89,10 @@ class Program(object):
             open(self.input_path, "w").close()
         result = self._run()
 
+        # TODO: solve java memory problem, maybe a new sandbox?
+        if self.lang == 'j':
+            result['memory'] = 0
+
         # Sum time
         self.sum_time += result['cpu_time']
         self.sum_memory = max(self.sum_memory, result['memory'])

@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             FileWriter writer = new FileWriter("/tmp/100001.txt");
-            writer.write("hello");
+            writer.write("aaa");
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

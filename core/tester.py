@@ -56,7 +56,6 @@ class Tester(object):
         # IMPORT DATA
         data_list = import_data(self.pretest_dir)
 
-
         for data in data_list:
             input_file = data[0]
             ans_file = data[1]
@@ -83,7 +82,7 @@ class Tester(object):
 
         if self.error == PRETEST_PASSED and len(data_list) > 0 and sum_score == 0:
             self.error = PRETEST_FAILED
-            self.message = 'Bad score'
+            self.message = 'Bad Score'
 
         print(('Pretest', self.program.submission_id, sum_score))
 

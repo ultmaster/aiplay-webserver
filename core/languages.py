@@ -16,7 +16,7 @@ LANGUAGE_SETTINGS = dict(
         "max_memory": -1,
         "compile_cmd": "/usr/bin/javac {src_path} -encoding UTF8",
         "exe_cmd": "/usr/bin/java -cp {exe_dir} -Xss1M -XX:MaxPermSize=16M -XX:PermSize=8M -Xms16M -Xmx{max_memory}M "
-                   " -Djava.awt.headless=true {exe_name}", # safe settings temporarily deleted
+                   "-Djava.awt.headless=true {exe_name}", # safe settings temporarily deleted
         "seccomp_rule": None,
         "env": ["MALLOC_ARENA_MAX=1", ("CLASSPATH=" + INCLUDE_DIR)]
     },
