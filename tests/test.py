@@ -245,7 +245,7 @@ class WebserverTest(unittest.TestCase):
 
     def test_language_java(self):
         data = dict(
-            submission={'id': 2001, 'lang': 'j', 'code': open('test_src/language/j.java').read()},
+            submission={'id': 2001, 'lang': 'j', 'code': open('test_src/language/Main.java').read()},
             config={'problem_id': 1001}
         )
         self.send_pretest(data)

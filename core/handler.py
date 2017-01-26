@@ -17,7 +17,7 @@ class Handler(object):
 
         # TEST
         if judge['id'] != BUILTIN_JUDGE:
-            self.test_result = Tester({'submission': judge, 'config': config}).test()
+            self.test_result = Tester({'submission': judge, 'config': config}, do_not_run=True).test()
         self.judge = Judge(judge, config, self.round_id)
         if self.test_result['code'] == PRETEST_PASSED:
             for submission in submission_list:

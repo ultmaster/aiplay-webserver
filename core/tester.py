@@ -8,11 +8,12 @@ from .utils import *
 # Tester: to test whether a submission is a valid submission
 class Tester(object):
 
-    def __init__(self, arg):
+    def __init__(self, arg, do_not_run=False):
         submission_info = arg.get('submission')
         judge_info = arg.get('judge')
         config = arg.get('config', dict())
 
+        self.do_not_run = do_not_run
         self.round_id = randomize_round_id()
         self.program = Program(submission_info, config, self.round_id)
         self.judge = Judge(judge_info, config, self.round_id) if judge_info is not None else None
@@ -26,7 +27,7 @@ class Tester(object):
         self.ans_path = os.path.join(self.round_dir, 'judge_ans')
 
     def test(self):
-        if self.test_compile() and self.judge is not None:
+        if self.test_compile():
             self.test_run()
         self.message = 'Submission #%d:\n' % self.program.submission_id + self.message
         return {'code': self.error, 'message': self.message}
@@ -42,7 +43,10 @@ class Tester(object):
 
     def test_run(self):
 
-        if not self.judge.compile():
+        if self.do_not_run:
+            return True
+
+        if self.judge is not None and not self.judge.compile():
             return False
 
         sum_score = 0
@@ -69,14 +73,17 @@ class Tester(object):
             running_result = self.program.run()
 
             if self.judge is not None:
-                judge_result = self.judge.run(pretest=True)
+                judge_result = self.judge.run()
                 sum_score += judge_result['score']
 
-                if running_result['result'] > 0:  # fatal error
-                    self.error = PRETEST_FAILED
+            if running_result['result'] > 0:  # fatal error
+                self.error = PRETEST_FAILED
+                self.message = read_partial_data_from_file(self.program.log_path, 1024)
+                break
 
-        if len(data_list) > 0 and sum_score == 0:
+        if self.error == PRETEST_PASSED and len(data_list) > 0 and sum_score == 0:
             self.error = PRETEST_FAILED
+            self.message = 'Bad score'
 
         print(('Pretest', self.program.submission_id, sum_score))
 

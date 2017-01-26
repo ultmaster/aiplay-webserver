@@ -28,15 +28,11 @@ class Judge(Program):
             open(path, "w").close()
         os.chmod(path, mode=0o666)
 
-    def run(self, pretest=False):
+    def run(self):
         self.generate_default_run_cmd()
         self.generate_new_file_for_judge(self.judge_in_path)
         self.generate_new_file_for_judge(self.judge_ans_path)
         self.generate_new_file_for_judge(self.judge_new_input_path)
-        if pretest:
-            self.run_cmd.append('pretest')
-        else:
-            self.run_cmd.append('main')
         super().run()
         return self._judge_text_processing()
 
