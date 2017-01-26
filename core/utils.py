@@ -23,7 +23,7 @@ def import_data(path):
     try:
         with open(os.path.join(path, 'data.conf'), 'r') as f:
             config = json.loads(f.read())
-    except (TypeError, FileNotFoundError):
+    except (TypeError, OSError):
         config = dict()
 
     raw_file_list = os.listdir(path)
@@ -52,7 +52,7 @@ def import_data(path):
     return result
 
 
-def read_partial_data_from_file(filename, length):
+def read_partial_data_from_file(filename, length=1024):
     with open(filename, "r") as f:
         result = f.read(length)
     if len(result) >= length - 1:
@@ -61,18 +61,7 @@ def read_partial_data_from_file(filename, length):
 
 
 def format_code_for_markdown(code):
-    code_length = len(code)
-    if code_length > 0:
-        start, end = 0, code_length - 1
-        while start < code_length and code[start] == '\n':
-            start += 1
-        while end >= 0 and code[end] == '\n':
-            end -= 1
-        if end < start:
-            return '\n\n'
-        else:
-            return '\n' + code[start:(end+1)] + '\n'
-    return '\n\n'
+    return '\n' + code.strip('\n') + '\n'
 
 
 def randomize_round_id():

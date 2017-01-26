@@ -36,7 +36,7 @@ class Judge(Program):
         self.generate_new_file_for_judge(self.judge_new_input_path)
         res = super().run()
         if res['result'] > 0:
-            print('Judge Debug: ' + read_partial_data_from_file(self.log_path, 1024))
+            print('Judge Debug: ' + read_partial_data_from_file(self.log_path))
         return self._judge_text_processing()
 
     # Returning a dict of all the things to do

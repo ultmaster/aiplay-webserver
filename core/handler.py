@@ -97,8 +97,8 @@ class Handler(object):
                     score=0,
                     result=running_result['result']
                 )
-                in_data = read_partial_data_from_file(self.input_path, 1024)
-                out_data = read_partial_data_from_file(self.output_path, 1024)
+                in_data = read_partial_data_from_file(self.input_path)
+                out_data = read_partial_data_from_file(self.output_path)
                 judge_data = 'none'
 
                 _continue = False
@@ -118,7 +118,7 @@ class Handler(object):
                     shutil.copyfile(self.judge.judge_new_input_path, self.input_path)
 
                 elif running_result['result'] == RUNTIME_ERROR:
-                    out_data = read_partial_data_from_file(self.judge.log_path, 1024)
+                    out_data = read_partial_data_from_file(self.judge.log_path)
 
                 # Write Log
                 _log_info['result'] = ERROR_CODE[_log_info['result']]

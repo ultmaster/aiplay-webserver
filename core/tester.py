@@ -35,9 +35,9 @@ class Tester(object):
     def test_compile(self):
         if not self.program.compile():
             self.error = COMPILE_ERROR
-            self.message = read_partial_data_from_file(self.program.compile_out_path, 1024)
+            self.message = read_partial_data_from_file(self.program.compile_out_path)
             if self.message == '':
-                self.message = read_partial_data_from_file(self.program.compile_log_path, 1024)
+                self.message = read_partial_data_from_file(self.program.compile_log_path)
             return False
         return True
 
@@ -77,7 +77,7 @@ class Tester(object):
 
             if running_result['result'] > 0:  # fatal error
                 self.error = PRETEST_FAILED
-                self.message = read_partial_data_from_file(self.program.log_path, 1024)
+                self.message = read_partial_data_from_file(self.program.log_path)
                 break
 
         if self.error == PRETEST_PASSED and len(data_list) > 0 and sum_score == 0:
