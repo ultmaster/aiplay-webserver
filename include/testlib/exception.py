@@ -13,21 +13,38 @@ class JudgeException(Exception):
 
 class UnexpectedInputError(JudgeException):
 
-    def __init__(self):
+    def __init__(self, line=0):
         super().__init__()
         self.message = 'idleness limit exceeded, unexpected input'
+        if line > 0:
+            self.message += ' on line %d' % line
 
 
 class InconsistentError(JudgeException):
 
-    def __init__(self):
+    def __init__(self, line=0):
         super().__init__()
         self.message = 'wrong answer'
+        if line > 0:
+            self.message += ' on line %d' % line
 
 
 class UnexpectedTypeError(UnexpectedInputError):
+    def __init__(self, expected, real, line=0):
+        super().__init__(line)
+        self.detail = 'expected %s, but %s found' % (expected, real)
 
-    def __init__(self, expected, real):
-        super().__init__()
-        self.detail = 'expected a(n) %s, but %s found' % (expected, real)
 
+class UnexpectedEOFError(UnexpectedTypeError):
+    def __init__(self, expected='a token', line=0):
+        super().__init__(expected, 'eof', line)
+
+
+class UnexpectedTokenInFileError(UnexpectedTypeError):
+    def __init__(self, line=0):
+        super().__init__('eof', 'another token', line)
+
+
+class UnexpectedTokenInLineError(UnexpectedTypeError):
+    def __init__(self, line=0):
+        super().__init__('end of line', 'another token', line)

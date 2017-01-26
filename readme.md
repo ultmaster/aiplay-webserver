@@ -132,6 +132,8 @@ Currently the following phrases are supported (we don't care about upper-lower c
 ```
 Rule #6 basically means that the program does nothing or does something weird that Judge cannot understand. :)
 
+Note that all the things you write as quotes (`'...'`) are ignored.
+
 Now consider a rare case in which you write:
 ```
 Your idea is correct, but you did something wrong. So you scored 50.
