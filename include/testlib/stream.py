@@ -5,11 +5,11 @@ from .exception import *
 
 
 def format_found_token(token):
-    if "'" in token:
-        return "'...'"
     if len(token) > 32:
-        return "'%s...'" % token[:32]
-    return "'%s'" % token
+        res = token[:32] + '...'
+    else:
+        res = token
+    return "'" + res.replace("'", '"') + "'"
 
 
 class InputStream:
@@ -109,7 +109,7 @@ class OutputStream:
 
     def __init__(self, file=None):
         if file is None or file == 'stdout':
-            self.file = sys.stdin
+            self.file = sys.stdout
         else:
             try:
                 self.file = open(file, "w")

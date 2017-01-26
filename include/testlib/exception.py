@@ -22,18 +22,17 @@ class UnexpectedInputError(JudgeException):
 
 class InconsistentError(JudgeException):
 
-    def __init__(self, msg, line=0):
+    def __init__(self, line=0):
         super().__init__()
         self.message = 'wrong answer'
         if line > 0:
             self.message += ' on line %d' % line
-        self.detail = msg
 
 
 class UnexpectedTypeError(UnexpectedInputError):
     def __init__(self, expected, real, line):
         super().__init__(line)
-        self.detail = 'expected %s, but %s found' % (expected, real)
+        self.detail = '%s expected, but %s found' % (expected, real)
 
 
 class UnexpectedEOFError(UnexpectedTypeError):
@@ -54,10 +53,17 @@ class UnexpectedTokenInLineError(UnexpectedTypeError):
 class InconsistentRealNumbersError(InconsistentError):
     def __init__(self, expected, real, line):
         super().__init__(line)
-        self.detail = 'expected %.12f, %.12f found, absolute error %.12f' % (expected, real, abs(expected - real))
+        self.detail = '%.12f expected, %.12f found, absolute error %.12f' % (expected, real, abs(expected - real))
 
 
 class InconsistentIntegersError(InconsistentError):
     def __init__(self, expected, real, line):
         super().__init__(line)
-        self.detail = 'expected %d, %d found' % (expected, real)
+        self.detail = '%d expected, %d found' % (expected, real)
+
+
+class UnexpectedAnswerError(JudgeException):
+
+    def __init__(self):
+        super().__init__()
+        self.message = 'answer file is illegal'

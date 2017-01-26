@@ -2,9 +2,10 @@ import unittest
 from os import path
 
 from testlib import *
+from testlib.checker import float_cmp, float_ocmp, float_ncmp
 
 data_dir = path.join(path.dirname(path.abspath(__file__)), 'data')
-
+res_path = path.join(data_dir, 'test.log')
 
 class TestlibTest(unittest.TestCase):
 
@@ -43,7 +44,6 @@ class TestlibTest(unittest.TestCase):
         integer_list = []
         for i in range(6):
             integer_list.append(ss.read_integer())
-        print(integer_list)
         with self.assertRaises(UnexpectedTypeError):
             ss.read_integer()
 
@@ -51,6 +51,60 @@ class TestlibTest(unittest.TestCase):
         ss = InputStream(path.join(data_dir, 'real_numbers.txt'))
         ss.read_real_number()
 
+    def test_float_cmp(self):
+        float_cmp.float_cmp(path.join(data_dir, 'float_cmp.out'), path.join(data_dir, 'float_cmp.ans'), res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^ok')
+
+    def test_float_cmp_eof_1(self):
+        float_cmp.float_cmp(path.join(data_dir, 'float_cmp_less.out'), path.join(data_dir, 'float_cmp.ans'), res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^idleness')
+        self.assertRegex(res, r'eof found')
+
+    def test_float_cmp_eof_2(self):
+        float_cmp.float_cmp(path.join(data_dir, 'float_cmp_more.out'), path.join(data_dir, 'float_cmp.ans'), res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^idleness')
+        self.assertRegex(res, r'another token found')
+
+    def test_float_cmp_not_float(self):
+        float_cmp.float_cmp(path.join(data_dir, 'float_cmp_not_float.out'), path.join(data_dir, 'float_cmp.ans'), res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^idleness')
+        self.assertRegex(res, r'a real number expected')
+
+    def test_float_cmp_wrong(self):
+        float_cmp.float_cmp(path.join(data_dir, 'float_cmp_wrong.out'), path.join(data_dir, 'float_cmp.ans'),
+                            res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^wrong')
+
+    def test_float_cmp_answer_wrong(self):
+        float_cmp.float_cmp(path.join(data_dir, 'float_cmp.out'), path.join(data_dir, 'float_cmp_wrong.ans'),
+                            res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'illegal')
+
+    def test_float_ocmp(self):
+        float_ocmp.float_ocmp(path.join(data_dir, 'float_ocmp.out'), path.join(data_dir, 'float_ocmp.ans'),
+                            res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^ok')
+
+    def test_float_ncmp(self):
+        float_ncmp.float_ncmp(path.join(data_dir, 'float_ncmp.out'), path.join(data_dir, 'float_ncmp.ans'),
+                            res_path)
+        res = open(res_path).readline()
+        print(res)
+        self.assertRegex(res, r'^wrong')
 
 if __name__ == '__main__':
     unittest.main()
