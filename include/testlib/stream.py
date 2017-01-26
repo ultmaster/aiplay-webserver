@@ -1,5 +1,6 @@
 import re
 import sys
+
 from .exception import *
 
 
@@ -102,3 +103,24 @@ class InputStream:
             return float(token)
         except (TypeError, ValueError):
             raise UnexpectedTypeError('a real number', format_found_token(token), self.line)
+
+
+class OutputStream:
+
+    def __init__(self, file=None):
+        if file is None or file == 'stdout':
+            self.file = sys.stdin
+        else:
+            try:
+                self.file = open(file, "w")
+            except OSError:
+                raise JudgeException('cannot write output')
+
+    def writeline(self, msg):
+        self.file.write(str(msg) + '\n')
+
+    def write(self, msg):
+        self.file.write(str(msg))
+
+    def report_ok(self, msg):
+        self.writeline('ok, ' + msg)

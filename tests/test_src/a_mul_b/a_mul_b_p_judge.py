@@ -7,4 +7,4 @@ if a * b != c:
     print('stop, wrong answer')
 else:
     print('continue, ok')
-    newin.write("%d %d\\n" % (c, c - 1))
+    newin.write("%d %d\n" % (c, c - 1))

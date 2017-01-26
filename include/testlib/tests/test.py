@@ -1,8 +1,7 @@
-import sys
 import unittest
 from os import path
-from include.testlib.stream import InputStream
-from include.testlib.exception import *
+
+from testlib import *
 
 data_dir = path.join(path.dirname(path.abspath(__file__)), 'data')
 

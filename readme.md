@@ -104,8 +104,6 @@ We give exactly two more command line arguments, no matter you are using it or n
 
 3. the new input path (rewrite)
 
-4. `pretest` for pretests; `main` for opposite cases
-
 Recall that when you are using C++ or Python, the command arguments start from 1. But
 when using Java, command arguments start form 0.
 

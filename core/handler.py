@@ -99,6 +99,7 @@ class Handler(object):
                 )
                 in_data = read_partial_data_from_file(self.input_path)
                 out_data = read_partial_data_from_file(self.output_path)
+                ans_data = ''
                 judge_data = 'none'
 
                 _continue = False
@@ -111,6 +112,7 @@ class Handler(object):
                     _log_info['score'] = judge_result['score']
                     _log_info['result'] = judge_result['message']
                     judge_data = judge_result['data']
+                    ans_data = read_partial_data_from_file(self.ans_path)
 
                     # New input
                     if os.path.exists(self.input_path):
@@ -118,7 +120,7 @@ class Handler(object):
                     shutil.copyfile(self.judge.judge_new_input_path, self.input_path)
 
                 elif running_result['result'] == RUNTIME_ERROR:
-                    out_data = read_partial_data_from_file(self.judge.log_path)
+                    judge_data = read_partial_data_from_file(self.judge.log_path)
 
                 # Write Log
                 _log_info['result'] = ERROR_CODE[_log_info['result']]
@@ -132,6 +134,8 @@ class Handler(object):
                 #       .format(**log_info))
                 self.round_log.write('input:\n```%s```\n' % format_code_for_markdown(in_data))
                 self.round_log.write('output:\n```%s```\n' % format_code_for_markdown(out_data))
+                if len(ans_data) > 0:
+                    self.round_log.write('answer:\n```%s```\n' % format_code_for_markdown(ans_data))
                 self.round_log.write('judge:\n```%s```\n' % format_code_for_markdown(judge_data))
 
                 # Deal with the game

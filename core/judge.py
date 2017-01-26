@@ -50,7 +50,8 @@ class Judge(Program):
 
         with open(self.output_path, "r") as f:
             result['data'] = f.read()
-            raw_text = re.split(r'[^A-Za-z0-9]', result['data'])
+            raw_text = re.sub(r"'.*?'", ' ', result['data'])
+            raw_text = re.split(r'[^A-Za-z0-9]', raw_text)
             text = []
             for t in raw_text:
                 if t != '':
