@@ -4,9 +4,9 @@ from os import sys, path
 import requests
 import unittest
 
-from server import *
-
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+from server import *
 
 PROBLEM_ID = dict(
     a_plus_b=1000,
@@ -126,6 +126,33 @@ class WebserverTest(unittest.TestCase):
         res = self.send_pretest(data)
         self.assertEqual(res['code'], PRETEST_PASSED, 'Pretest Failed for REASON: %s; JSON: %s'
                          % (ERROR_CODE[res['code']], json.dumps(res)))
+
+    # A + B Problem Test
+
+    def test_judge_a_plus_b_ac(self):
+        data = dict(
+            submissions=[
+                self.formatSubmissionJSON(300, 'c', 'a_plus_b/a_plus_b_c_ok')
+            ],
+            judge=dict(id=205, lang='b', code='testlib/checker/int_ocmp.py'),
+            config={'problem_id': 1000}
+        )
+        res = self.send_judge(data)
+        self.assertEqual(res['code'], FINISHED, 'Judge Failed for REASON: %s; JSON: %s'
+                         % (ERROR_CODE[res['code']], json.dumps(res)))
+
+    def test_judge_a_plus_b_wa(self):
+        data = dict(
+            submissions=[
+                self.formatSubmissionJSON(301, 'c', 'a_plus_b/a_plus_b_c_wa')
+            ],
+            judge=dict(id=205, lang='b', code='testlib/checker/int_ocmp.py'),
+            config={'problem_id': 1000}
+        )
+        res = self.send_judge(data)
+        self.assertEqual(res['code'], FINISHED, 'Judge Failed for REASON: %s; JSON: %s'
+                         % (ERROR_CODE[res['code']], json.dumps(res)))
+
 
 if __name__ == '__main__':
     unittest.main()

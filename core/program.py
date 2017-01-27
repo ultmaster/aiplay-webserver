@@ -2,6 +2,7 @@ import _judger
 import uuid
 from config import *
 from .languages import LANGUAGE_SETTINGS
+from .utils import get_language
 
 
 # For celery usage
@@ -21,6 +22,16 @@ class Program(object):
         self.submission_id = submission.get('id', 0)
         self.lang = submission.get('lang', 'c')
         self.code = submission.get('code', '')
+        if self.lang == 'b':  # built-in program
+            try:
+                code_path = os.path.normpath(os.path.join(INCLUDE_DIR, self.code))
+                self.lang = get_language(code_path)
+                if not code_path.startswith(INCLUDE_DIR):
+                    raise OSError
+                self.code = open(code_path, 'r').read()
+            except OSError:
+                self.code = ''
+
         self.language_settings = LANGUAGE_SETTINGS[self.lang]
         self.score = 0
         self.sum_score = 0

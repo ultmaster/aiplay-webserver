@@ -16,8 +16,7 @@ class Handler(object):
         self.submissions = []
 
         # TEST
-        if judge['id'] != BUILTIN_JUDGE:
-            self.test_result = Tester({'submission': judge, 'config': config}, do_not_run=True).test()
+        self.test_result = Tester({'submission': judge, 'config': config}, do_not_run=True).test()
         self.judge = Judge(judge, config, self.round_id)
         if self.test_result['code'] == PRETEST_PASSED:
             for submission in submission_list:
@@ -81,7 +80,7 @@ class Handler(object):
                 self.submissions[i].score = 0
                 self.submissions[i].sum_time = 0
                 self.submissions[i].sum_memory = 0
-            cnt = 1
+            cnt = 0
             run_count = 1
 
             while True:

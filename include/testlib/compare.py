@@ -58,7 +58,8 @@ class Compare:
         return self.ans_file.line
 
     def set_eps(self, eps):
-        self.eps = eps
+        if eps is not None:
+            self.eps = eps
 
     def set_expectation(self, expect):
         self.expect = expect
@@ -129,8 +130,7 @@ def _compare_until_eof(out, ans, result, expect, eps=None):
     result_file = OutputStream(result)
     try:
         cmp = Compare(out, ans)
-        if eps is not None:
-            cmp.set_eps(eps)
+        cmp.set_eps(eps)
         cnt = 0
         while cmp.compare_next(expect):
             cnt += 1
@@ -143,8 +143,7 @@ def _compare_for_cnt(out, ans, result, expect, eps=None):
     result_file = OutputStream(result)
     try:
         cmp = Compare(out, ans)
-        if eps is not None:
-            cmp.set_eps(eps)
+        cmp.set_eps(eps)
         if not cmp.compare_next(Compare.EXPECT_INTEGER):
             raise UnexpectedAnswerError(cmp.ans_line())
         ans_length = cmp.ans_content

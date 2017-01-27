@@ -26,9 +26,11 @@ def import_data(path):
     except (TypeError, OSError):
         config = dict()
 
+    result = []
+    if not os.path.exists(path):
+        return result
     raw_file_list = os.listdir(path)
     file_list = [(x, False) for x in raw_file_list]
-    result = []
     patterns = {r'.in$': ['.out', '.ans'], r'input': ['output', 'answer']}
 
     for (in_pattern, out_pattern) in patterns.items():
@@ -66,3 +68,12 @@ def format_code_for_markdown(code):
 
 def randomize_round_id():
     return str(uuid.uuid1())
+
+
+def get_language(path):
+    if path.endswith('.cpp'):
+        return 'c'
+    elif path.endswith('.py'):
+        return 'p'
+    elif path.endswith('.java'):
+        return 'j'
