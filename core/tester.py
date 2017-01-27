@@ -74,17 +74,15 @@ class Tester(object):
             if self.judge is not None:
                 judge_result = self.judge.run()
                 sum_score += judge_result['score']
+                if judge_result['score'] == 0 and data[2] > 0:
+                    self.error = PRETEST_FAILED
+                    self.message = 'Bad Score'
+                    break
 
             if running_result['result'] > 0:  # fatal error
                 self.error = PRETEST_FAILED
                 self.message = read_partial_data_from_file(self.program.log_path)
                 break
-
-        if self.error == PRETEST_PASSED and len(data_list) > 0 and sum_score == 0:
-            self.error = PRETEST_FAILED
-            self.message = 'Bad Score'
-
-        print(('Pretest', self.program.submission_id, sum_score))
 
         # CLEAN UP
         for file in os.listdir(self.round_dir):

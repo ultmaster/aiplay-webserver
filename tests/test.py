@@ -146,11 +146,12 @@ class WebserverTest(unittest.TestCase):
             submissions=[
                 self.formatSubmissionJSON(301, 'c', 'a_plus_b/a_plus_b_c_wa')
             ],
+            pretest_judge=dict(id=205, lang='b', code='testlib/checker/int_ocmp.py'),
             judge=dict(id=205, lang='b', code='testlib/checker/int_ocmp.py'),
             config={'problem_id': 1000}
         )
         res = self.send_judge(data)
-        self.assertEqual(res['code'], FINISHED, 'Judge Failed for REASON: %s; JSON: %s'
+        self.assertEqual(res['code'], PRETEST_FAILED, 'Judge Failed for REASON: %s; JSON: %s'
                          % (ERROR_CODE[res['code']], json.dumps(res)))
 
 

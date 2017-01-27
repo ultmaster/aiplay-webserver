@@ -1,4 +1,5 @@
 import shutil
+import copy
 from random import Random
 from .program import Program
 from .judge import Judge
@@ -8,25 +9,48 @@ from config import *
 
 
 class Handler(object):
+
+    class TestFailedException(Exception):
+        pass
+
     def __init__(self, data):
+        # Handling a not complete data?
+        # Problem ID in config and submission code are mandatory!
+        # Failing to submit them will trigger an exception in the following code
+        if data.get('judge') is None:
+            data['judge'] = {'id': 0, 'lang': 'b', 'code': 'testlib/checker/file_cmp.py'}
+        if data.get('pretest_judge') is None:
+            data['pretest_judge'] = copy.deepcopy(data['judge'])
+
         submission_list = data.get('submissions')
         config = data.get('config', dict())
         judge = data.get('judge')
+        pretest_judge = data.get('pretest_judge', judge)
         self.round_id = randomize_round_id()
         self.submissions = []
 
         # TEST
-        self.test_result = Tester({'submission': judge, 'config': config}, do_not_run=True).test()
-        self.judge = Judge(judge, config, self.round_id)
-        if self.test_result['code'] == PRETEST_PASSED:
-            for submission in submission_list:
-                self.test_result = Tester({'submission': submission, 'config': config}).test()
-                if self.test_result['code'] == PRETEST_PASSED:
-                    self.submissions.append(Program(submission, config, self.round_id))
-                else:
-                    break
+        try:
+            self.test_result = Tester({'submission': judge, 'config': config}, do_not_run=True).test()
+            if self.test_result['code'] != PRETEST_PASSED:
+                raise Handler.TestFailedException
+            self.judge = Judge(judge, config, self.round_id)
 
-        if self.test_result['code'] == PRETEST_PASSED:
+            self.test_result = Tester({'submission': pretest_judge, 'config': config}, do_not_run=True).test()
+            if self.test_result['code'] != PRETEST_PASSED:
+                raise Handler.TestFailedException
+            self.pretest_judge = Judge(pretest_judge, config, self.round_id)
+
+            for submission in submission_list:
+                self.test_result = Tester({'submission': submission, 'judge': pretest_judge, 'config': config}).test()
+                if self.test_result['code'] != PRETEST_PASSED:
+                    raise Handler.TestFailedException
+                self.submissions.append(Program(submission, config, self.round_id))
+
+        except Handler.TestFailedException:
+            pass
+
+        else:
             self.problem_id = config['problem_id']
             self.data_dir = os.path.join(DATA_DIR, str(self.problem_id))
             self.round_dir = os.path.join(ROUND_DIR, str(self.round_id))
@@ -38,14 +62,13 @@ class Handler(object):
             self.round_log = open(self.round_log_path, "w")
             self.dumped = False
 
-
     def run(self):
         if self.test_result['code'] != PRETEST_PASSED:
             return self.test_result
 
         if self.dumped:
             # WHAT THE HELL?
-            return { 'code': SYSTEM_ERROR }
+            return {'code': SYSTEM_ERROR}
         self.dumped = True
 
         # IMPORT DATA

@@ -15,7 +15,9 @@ def _celery_judger_run(args):
 
 # This class is meant to deal with all difficulties when it comes to programs.
 # If initiated properly, you can simply use compile() and run() to run the program.
+
 class Program(object):
+
     def __init__(self, submission, config, round_id):
 
         # About this program
@@ -23,6 +25,7 @@ class Program(object):
         self.lang = submission.get('lang', 'c')
         self.code = submission.get('code', '')
         if self.lang == 'b':  # built-in program
+            self.lang = 'p'
             try:
                 code_path = os.path.normpath(os.path.join(INCLUDE_DIR, self.code))
                 self.lang = get_language(code_path)
@@ -37,8 +40,8 @@ class Program(object):
         self.sum_score = 0
 
         # Restrictive settings
-        self.problem_id = config.get('problem_id', 1001)
         self.round_id = round_id
+        self.problem_id = config.get('problem_id')
         self.max_time = config.get('max_time', 1000)
         self.max_memory = config.get('max_memory', 256)
         self.max_sum_time = config.get('max_sum_time', 10000)

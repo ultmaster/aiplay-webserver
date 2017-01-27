@@ -9,8 +9,11 @@ from core.tester import Tester
 def server_judge():
     result = {'status': 'reject'}
     if request.is_json:
-        result['status'] = 'received'
-        result.update(Handler(request.get_json()).run())
+        try:
+            result.update(Handler(request.get_json()).run())
+            result['status'] = 'received'
+        except Exception as e:
+            print(e)
     return jsonify(result)
 
 
@@ -18,8 +21,11 @@ def server_judge():
 def server_test():
     result = {'status': 'reject'}
     if request.is_json:
-        result['status'] = 'received'
-        result.update(Tester(request.get_json()).test())
+        try:
+            result.update(Tester(request.get_json()).test())
+            result['status'] = 'received'
+        except Exception as e:
+            print(e)
     return jsonify(result)
 
 
