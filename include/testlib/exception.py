@@ -70,6 +70,6 @@ class InconsistentTokensError(InconsistentError):
 
 class UnexpectedAnswerError(JudgeException):
 
-    def __init__(self):
+    def __init__(self, line):
         super().__init__()
-        self.message = 'answer file is illegal'
+        self.message = 'answer file is illegal on line %d' % line

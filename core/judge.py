@@ -59,21 +59,21 @@ class Judge(Program):
             text = ' '.join(text)
             text = text.lower()
 
-            if re.search(r'continue', text) is not None:
+            if re.search(r'\bcontinue\b', text) is not None:
                 result['continue'] = True
 
-            if re.search(r'stop', text) is not None:
+            if re.search(r'\bstop\b', text) is not None:
                 result['continue'] = False
 
-            if re.search(r'ok|yes|right|correct', text) is not None:
+            if re.search(r'\b(ok|yes|right|correct)\b', text) is not None:
                 result['score'] = 100
                 result['message'] = CORRECT
 
-            if re.search(r'no|wrong', text) is not None:
+            if re.search(r'\b(no|wrong)\b', text) is not None:
                 result['score'] = 0
                 result['message'] = WRONG_ANSWER
 
-            pattern = re.search(r'score[ds]? \d+', text)
+            pattern = re.search(r'(score|point)[ds]? \d+', text)
             if pattern is not None:
                 num = int(re.search(r'\d+', pattern.group()).group())
                 num = min(max(num, 0), 100)

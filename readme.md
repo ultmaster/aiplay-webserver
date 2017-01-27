@@ -125,7 +125,7 @@ Currently the following phrases are supported (we don't care about upper-lower c
 2. stop
 3. ok / yes / right / correct (meaning score 100)
 4. no / wrong (meaning score 0)
-5. scored / scores / score <integer> (from 0 to 100)
+5. points / scored / scores / score <integer> (from 0 to 100)
 6. idleness limit exceeded (score 0 and stop)
 ```
 Rule #6 basically means that the program does nothing or does something weird that Judge cannot understand. :)

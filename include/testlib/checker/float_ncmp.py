@@ -14,7 +14,7 @@ def float_ncmp(out, ans, result):
         try:
             ans_length = ans_file.read_integer()
         except JudgeException:
-            raise UnexpectedAnswerError
+            raise UnexpectedAnswerError(ans_file.line)
         out_length = out_file.read_integer()
         if out_length != ans_length:
             raise InconsistentIntegersError(ans_length, out_length, out_file.line)
@@ -22,14 +22,14 @@ def float_ncmp(out, ans, result):
             try:
                 ans_number = ans_file.read_real_number()
             except JudgeException:
-                raise UnexpectedAnswerError
+                raise UnexpectedAnswerError(ans_file.line)
             out_number = out_file.read_real_number()
             if abs(out_number - ans_number) > EPS:
                 raise InconsistentRealNumbersError(ans_number, out_number, out_file.line)
         try:
             ans_file.read_eof()
         except JudgeException:
-            raise UnexpectedAnswerError
+            raise UnexpectedAnswerError(ans_file.line)
         out_file.read_eof()
         result_file.report_ok('%d real number(s)' % ans_length)
     except JudgeException as e:

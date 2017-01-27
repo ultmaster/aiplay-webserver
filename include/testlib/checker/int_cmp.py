@@ -1,4 +1,4 @@
-# Compare two integers
+# Compare sequences of two integers
 # Keep doing that until End Of File
 
 from testlib import *
@@ -18,7 +18,7 @@ def int_cmp(out, ans, result):
             except UnexpectedEOFError:
                 eof_expected = True
             except JudgeException:
-                raise UnexpectedAnswerError
+                raise UnexpectedAnswerError(ans_file.line)
             if eof_expected:
                 out_file.read_eof()
                 break

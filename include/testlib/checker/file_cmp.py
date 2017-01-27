@@ -2,8 +2,6 @@
 
 from testlib import *
 
-EPS = 1e-6
-
 
 def file_cmp(out, ans, result):
     out_file = InputStream(out)
@@ -21,7 +19,7 @@ def file_cmp(out, ans, result):
             except UnexpectedEOFError:
                 eof_expected = True
             except JudgeException:
-                raise UnexpectedAnswerError
+                raise UnexpectedAnswerError(ans_file.line)
             try:
                 out_line = out_file.read_line().rstrip()
             except UnexpectedEOFError:

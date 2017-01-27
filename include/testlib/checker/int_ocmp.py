@@ -13,7 +13,7 @@ def int_ocmp(out, ans, result):
             ans_number = ans_file.read_integer()
             ans_file.read_eof()
         except JudgeException:
-            raise UnexpectedAnswerError
+            raise UnexpectedAnswerError(ans_file.line)
         out_number = out_file.read_integer()
         out_file.read_eof()
         if out_number != ans_number:
