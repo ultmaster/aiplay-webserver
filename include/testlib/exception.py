@@ -32,7 +32,7 @@ class InconsistentError(JudgeException):
 class UnexpectedTypeError(UnexpectedInputError):
     def __init__(self, expected, real, line):
         super().__init__(line)
-        self.detail = '%s expected, but %s found' % (expected, real)
+        self.detail = '%s expected, but %s found' % (str(expected), str(real))
 
 
 class UnexpectedEOFError(UnexpectedTypeError):
@@ -53,13 +53,14 @@ class UnexpectedTokenInLineError(UnexpectedTypeError):
 class InconsistentRealNumbersError(InconsistentError):
     def __init__(self, expected, real, line):
         super().__init__(line)
-        self.detail = '%.12f expected, %.12f found, absolute error %.12f' % (expected, real, abs(expected - real))
+        self.detail = 'a real number %.12f expected, %.12f found, absolute error %.12f' % \
+                      (expected, real, abs(expected - real))
 
 
 class InconsistentIntegersError(InconsistentError):
     def __init__(self, expected, real, line):
         super().__init__(line)
-        self.detail = '%d expected, %d found' % (expected, real)
+        self.detail = 'an integer %d expected, %d found' % (expected, real)
 
 
 class InconsistentTokensError(InconsistentError):
@@ -73,3 +74,10 @@ class UnexpectedAnswerError(JudgeException):
     def __init__(self, line):
         super().__init__()
         self.message = 'answer file is illegal on line %d' % line
+
+
+class FileNotFoundError(JudgeException):
+
+    def __init__(self, detail=''):
+        super().__init__(detail)
+        self.message = 'judge quits because file sent for judge is not found'

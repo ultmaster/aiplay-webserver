@@ -5,6 +5,8 @@ from .exception import *
 
 
 def format_found_token(token):
+    if not isinstance(token, str):
+        return token
     if len(token) > 32:
         res = token[:32] + '...'
     else:
@@ -24,7 +26,7 @@ class InputStream:
             try:
                 self.file = open(file, "r")
             except OSError:
-                self.file = None
+                raise FileNotFoundError
 
     def _get_all_from_buffer(self):
         try:
@@ -34,7 +36,7 @@ class InputStream:
                 raise EOFError
             return _buffer
         except EOFError:
-            return ''
+            raise UnexpectedEOFError()
 
     def _get_a_line_from_buffer(self):
         if len(self.buffer) > 0:
@@ -115,7 +117,7 @@ class OutputStream:
             try:
                 self.file = open(file, "w")
             except OSError:
-                raise JudgeException('cannot write output')
+                raise FileNotFoundError('cannot write output')
 
     def writeline(self, msg):
         self.file.write(str(msg) + '\n')
