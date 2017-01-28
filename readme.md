@@ -1,60 +1,71 @@
 # AI Playground Webserver
 
-## Preparation (obscure)
+Webserver for AI Playground.
+
+## What can it do?
+
+1. Upload test data to it
+
+2. Send pretest request to it
+
+3. Send judge request to it
+
+## Tutorial of installation
+The installation is very simple. (under good web condition of course)
+
+**Step 1:** clone the repository, and install [Docker](https://www.docker.com/).
+
+**Step 2:** edit `setup.py` to change the token (**IMPORTANT!!!**)
+
+**Step 3:** run `sudo ./install.sh`
+
+**Step 4:** have a cup of tea or coffee...
+
+**Step 5:** `sudo docker run -it -p 4999:4999 aiplay/webserver:v1`
+
+And if nothing ridiculous pops out, done!
+
+**Tips:** You can use `Ctrl + P + Q` to have your terminal back. For advanced usage,
+learning a tutorial about docker is strongly recommended. :)
+
+## The first thing you probably want to know
 ### ROOT
-`su` before running everything
-### Important: install judger
-```
-cd include/judger && ./runtest.sh
-```
-**Done!**
+`su` before running everything!
 
-Note: it is ok if you fail in 1-2 tests.
-### Requirements
-```
-pip install -r requirements.txt
-sudo apt-get install redis-server
-```
-```
-# not using yet
-sudo groupadd compiler
-sudo useradd -g compiler compiler
-```
-### Do this before you run things
-```
-redis-server (working backstage if you prefer)
-celery worker -A config.celery --loglevel=info
-```
-### Future plans
-There is also directories needed to create. I included them in `setup.py`. In the future, I hope
-`sudo python3 setup.py`
-will all do.
+Don't worry that root permission will blow your system. 
+Everything which is possible to be dangerous will be carefully controlled.
+And since the whole system is running on docker......
 
+### Fail in Judger unittests
+It is ok if you fail in 1-2 tests.
 
-## JSON
+## How to use it
 #### Request of main test
+Language can be 'cpp' for C++11, 'java' for Java 7, 'python' for Python 3, 'builtin' for built-in programs.
+
+To know more about built-in programs, see below.
 ```json
 {
   "submissions":[
     {
       "id":100,
-      "lang":"c",
+      "lang":"cpp",
       "code":"int main(){}"
     },
     {
       "id":101,
-      "lang":"p",
+      "lang":"python",
       "code":"print('!')"
     }
   ],
   "judge": {
     "id":200,
-    "lang":"j",
+    "lang":"java",
     "code":"class Main { public static void main() { } }"
   },
   "pretest_judge": {
-    "id":-1,
-    "lang":"ncmp"
+    "lang":"builtin",
+    "code":"testlib/checker/int_ocmp.py"
   },
   "config": {
     "problem_id":1001,
@@ -64,7 +75,7 @@ will all do.
   }
 }
 ```
-Note that pretest judge is optional. We will use judge for default.
+Actually many parts of this json is optional. But we don't recommend you 
 #### Request of pretest
 ```json
 {
