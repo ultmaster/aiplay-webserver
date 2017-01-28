@@ -20,10 +20,10 @@ PROBLEM_ID = dict(
 JSON_BASE_DICT = {"headers": {"Content-Type": "application/json",
                               'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}}
 SIMPLE_HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
-URL = 'http://47.88.78.6:4999'
+URL = 'http://xxxxxxxxxxxxxxx'
 LOCAL_URL = 'http://127.0.0.1:4999'
 REMOTE_URL_1 = 'http://47.88.78.6:4999'
-
+TOKEN = 'xxxx'
 
 class WebserverTest(unittest.TestCase):
 
@@ -47,7 +47,7 @@ class WebserverTest(unittest.TestCase):
         kwargs = JSON_BASE_DICT.copy()
         kwargs["data"] = json.dumps(data)
         url = URL + "/test"
-        res = requests.post(url, json=data, auth=('token', 'token')).json()
+        res = requests.post(url, json=data, auth=('token', TOKEN)).json()
         print(json.dumps(res))
         return res
 
@@ -56,7 +56,7 @@ class WebserverTest(unittest.TestCase):
         kwargs = JSON_BASE_DICT.copy()
         kwargs["data"] = json.dumps(data)
         url = URL + '/judge'
-        res = requests.post(url, json=data, auth=('token', 'token')).json()
+        res = requests.post(url, json=data, auth=('token', TOKEN)).json()
         print(json.dumps(res))
         return res
 
@@ -85,7 +85,7 @@ class WebserverTest(unittest.TestCase):
         url = URL + '/upload/%s/%d' % (type, id)
         WebserverTest.add_dir_to_file('test_data/%s/%d' % (type, id), 'test_data/upload.zip')
         with open('test_data/upload.zip', 'rb') as f:
-            res = requests.post(url, data=f.read(), auth=('token', 'token'), headers=SIMPLE_HEADERS).json()
+            res = requests.post(url, data=f.read(), auth=('token', TOKEN), headers=SIMPLE_HEADERS).json()
             print(json.dumps(res))
 
     # A * B Problem Test
