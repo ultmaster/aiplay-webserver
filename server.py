@@ -1,10 +1,10 @@
 import uuid
 import zipfile
+import sys
 from flask import Flask, request, jsonify
 from config import *
 from core.handler import Handler
 from core.tester import Tester
-from local_config import *
 
 
 def verify_token(data):
@@ -70,4 +70,9 @@ def server_test():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=4999, debug=DEBUG)
+    HOST, PORT, DEBUG = '127.0.0.1', 4999, True
+    if len(sys.argv) > 1:
+        HOST = sys.argv[1]
+        PORT = int(sys.argv[2])
+        DEBUG = False if sys.argv[3] == 'NO_DEBUG' else True
+    app.run(host=HOST, port=PORT, debug=DEBUG)

@@ -17,10 +17,6 @@ try:
     os.mkdir(TMP_DIR)
     shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
 
-    # Close debug mode
-    with open('local_config.py', 'w') as f:
-        f.write('DEBUG = False')
-
 except FileNotFoundError as e:
     print(e)
     print('Are you sure this copy is complete?')
