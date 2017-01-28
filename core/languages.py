@@ -1,7 +1,7 @@
 from config import *
 
-LANGUAGE_SETTINGS = dict(
-    c={
+LANGUAGE_SETTINGS = {
+    'cpp': {
         "src_name": "main.cpp",
         "exe_name": "main",
         "max_memory": 128 * 1024 * 1024,
@@ -10,17 +10,17 @@ LANGUAGE_SETTINGS = dict(
         "seccomp_rule": "c_cpp",
         "env": [("CPLUS_INCLUDE_PATH=" + INCLUDE_DIR)]
     },
-    j={
+    'java': {
         "src_name": "Main.java",
         "exe_name": "Main",
         "max_memory": -1,
         "compile_cmd": "/usr/bin/javac {src_path} -encoding UTF8",
         "exe_cmd": "/usr/bin/java -cp {exe_dir} -Xss1M -XX:MaxPermSize=16M -XX:PermSize=8M -Xms16M -Xmx{max_memory}M "
-                   "-Djava.awt.headless=true {exe_name}", # safe settings temporarily deleted
+                   "-Djava.security.manager -Djava.security.policy==/etc/java_policy -Djava.awt.headless=true {exe_name}",
         "seccomp_rule": None,
         "env": ["MALLOC_ARENA_MAX=1", ("CLASSPATH=" + INCLUDE_DIR)]
     },
-    p={
+    'python': {
         # A Naive solution of copy
         "src_name": "solution.py",
         "exe_name": "solution.py",  # TODO assign exe_path when compile
@@ -30,4 +30,4 @@ LANGUAGE_SETTINGS = dict(
         "seccomp_rule": None,
         "env": [("PYTHONPATH=" + INCLUDE_DIR)]
     }
-)
+}

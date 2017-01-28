@@ -18,7 +18,7 @@ class Handler(object):
         # Problem ID in config and submission code are mandatory!
         # Failing to submit them will trigger an exception in the following code
         if data.get('judge') is None:
-            data['judge'] = {'id': 0, 'lang': 'b', 'code': 'testlib/checker/file_cmp.py'}
+            data['judge'] = {'id': 0, 'lang': 'builtin', 'code': 'testlib/checker/file_cmp.py'}
         if data.get('pretest_judge') is None:
             data['pretest_judge'] = copy.deepcopy(data['judge'])
 

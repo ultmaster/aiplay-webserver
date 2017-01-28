@@ -1,4 +1,3 @@
-# coding=utf-8
 from celery import Celery
 from flask import Flask
 
@@ -61,9 +60,6 @@ ERROR_CODE = {
     8: 'Pretest Failed',
     9: 'Sum Time Limit Exceeded'
 }
-
-# For using built-in judge
-BUILTIN_JUDGE = -1
 
 app = Flask(__name__)
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'

@@ -73,8 +73,8 @@ def randomize_round_id():
 
 def get_language(path):
     if path.endswith('.cpp'):
-        return 'c'
+        return 'cpp'
     elif path.endswith('.py'):
-        return 'p'
+        return 'python'
     elif path.endswith('.java'):
-        return 'j'
+        return 'java'

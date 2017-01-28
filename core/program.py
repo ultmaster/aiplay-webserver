@@ -22,10 +22,10 @@ class Program(object):
 
         # About this program
         self.submission_id = submission.get('id', 0)
-        self.lang = submission.get('lang', 'c')
+        self.lang = submission.get('lang', 'cpp')
         self.code = submission.get('code', '')
-        if self.lang == 'b':  # built-in program
-            self.lang = 'p'
+        if self.lang == 'builtin':  # built-in program
+            self.lang = 'python'
             try:
                 code_path = os.path.normpath(os.path.join(INCLUDE_DIR, self.code))
                 self.lang = get_language(code_path)
@@ -106,7 +106,7 @@ class Program(object):
         result = self._run()
 
         # TODO: solve java memory problem, maybe a new sandbox?
-        if self.lang == 'j':
+        if self.lang == 'java':
             result['memory'] = 0
 
         # Sum time
@@ -154,7 +154,7 @@ class Program(object):
         return dict(
             max_cpu_time=self.max_time,
             max_real_time=self.max_time * 10,
-            max_memory=self.max_memory * 1048576 if self.lang != 'j' else -1,
+            max_memory=self.max_memory * 1048576 if self.lang != 'java' else -1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
             exe_path=self.run_cmd[0],

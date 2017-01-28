@@ -2,6 +2,7 @@
 import shutil
 from os import sys, path
 import requests
+import json
 from requests.auth import HTTPBasicAuth
 import unittest
 import zipfile
@@ -33,6 +34,11 @@ class WebserverTest(unittest.TestCase):
         shutil.copytree(os.path.join(BASE_DIR, 'tests/test_data/data'), DATA_DIR)
         shutil.copytree(os.path.join(BASE_DIR, 'tests/test_data/pretest'), PRETEST_DIR)
 
+        # Java problem
+        os.chown(os.path.join(INCLUDE_DIR, 'testlib/include_test'), COMPILER_USER_UID, COMPILER_GROUP_GID)
+        with open('/etc/java_policy', 'w') as f:
+            f.write(open('java_policy').read())
+
     def tearDown(self):
         pass
 
@@ -55,13 +61,13 @@ class WebserverTest(unittest.TestCase):
         return res
 
     @staticmethod
-    def formatSubmissionJSON(submission_id=0, lang='c', code_path=''):
+    def formatSubmissionJSON(submission_id=0, lang='cpp', code_path=''):
         if '.' not in code_path:
-            if lang == 'c':
+            if lang == 'cpp':
                 code_path += '.cpp'
-            elif lang == 'p':
+            elif lang == 'python':
                 code_path += '.py'
-            elif lang == 'j':
+            elif lang == 'java':
                 code_path += '.java'
         return {"id": submission_id, "lang": lang, "code": open('test_src/' + code_path, "r").read()}
 
@@ -88,10 +94,10 @@ class WebserverTest(unittest.TestCase):
     def test_judge_a_mul_b_cpp(self):
         data = dict(
             submissions=[
-                self.formatSubmissionJSON(100, 'c', 'a_mul_b/a_mul_b_c_int'),
-                self.formatSubmissionJSON(101, 'c', 'a_mul_b/a_mul_b_c_long')
+                self.formatSubmissionJSON(100, 'cpp', 'a_mul_b/a_mul_b_c_int'),
+                self.formatSubmissionJSON(101, 'cpp', 'a_mul_b/a_mul_b_c_long')
             ],
-            judge=self.formatSubmissionJSON(200, 'c', 'a_mul_b/a_mul_b_c_judge'),
+            judge=self.formatSubmissionJSON(200, 'cpp', 'a_mul_b/a_mul_b_c_judge'),
             config={'problem_id': 1001}
         )
         res = self.send_judge(data)
@@ -101,10 +107,10 @@ class WebserverTest(unittest.TestCase):
     def test_judge_a_mul_b_python(self):
         data = dict(
             submissions=[
-                self.formatSubmissionJSON(100, 'c', 'a_mul_b/a_mul_b_c_int'),
-                self.formatSubmissionJSON(101, 'c', 'a_mul_b/a_mul_b_c_long')
+                self.formatSubmissionJSON(100, 'cpp', 'a_mul_b/a_mul_b_c_int'),
+                self.formatSubmissionJSON(101, 'cpp', 'a_mul_b/a_mul_b_c_long')
             ],
-            judge=self.formatSubmissionJSON(201, 'p', 'a_mul_b/a_mul_b_p_judge'),
+            judge=self.formatSubmissionJSON(201, 'python', 'a_mul_b/a_mul_b_p_judge'),
             config={'problem_id': 1001}
         )
         res = self.send_judge(data)
@@ -113,8 +119,8 @@ class WebserverTest(unittest.TestCase):
 
     def test_pretest_a_mul_b(self):
         data = dict(
-            submission=self.formatSubmissionJSON(100, 'c', 'a_mul_b/a_mul_b_c_int'),
-            judge=self.formatSubmissionJSON(201, 'p', 'a_mul_b/a_mul_b_p_judge'),
+            submission=self.formatSubmissionJSON(100, 'cpp', 'a_mul_b/a_mul_b_c_int'),
+            judge=self.formatSubmissionJSON(201, 'python', 'a_mul_b/a_mul_b_p_judge'),
             config={'problem_id': 1001}
         )
         res = self.send_pretest(data)
@@ -125,7 +131,7 @@ class WebserverTest(unittest.TestCase):
 
     def test_language_cpp(self):
         data = dict(
-            submission={'id': 2000, 'lang': 'c', 'code': open('test_src/language/c.cpp').read()},
+            submission={'id': 2000, 'lang': 'cpp', 'code': open('test_src/language/c.cpp').read()},
             config={'problem_id': 1001}
         )
         res = self.send_pretest(data)
@@ -134,7 +140,7 @@ class WebserverTest(unittest.TestCase):
 
     def test_language_java(self):
         data = dict(
-            submission={'id': 2001, 'lang': 'j', 'code': open('test_src/language/Main.java').read()},
+            submission={'id': 2001, 'lang': 'java', 'code': open('test_src/language/Main.java').read()},
             config={'problem_id': 1001}
         )
         res = self.send_pretest(data)
@@ -143,7 +149,7 @@ class WebserverTest(unittest.TestCase):
 
     def test_language_python(self):
         data = dict(
-            submission={'id': 2002, 'lang': 'p', 'code': open('test_src/language/p.py').read()},
+            submission={'id': 2002, 'lang': 'python', 'code': open('test_src/language/p.py').read()},
             config={'problem_id': 1001}
         )
         res = self.send_pretest(data)
@@ -155,9 +161,9 @@ class WebserverTest(unittest.TestCase):
     def test_judge_a_plus_b_ac(self):
         data = dict(
             submissions=[
-                self.formatSubmissionJSON(300, 'c', 'a_plus_b/a_plus_b_c_ok')
+                self.formatSubmissionJSON(300, 'cpp', 'a_plus_b/a_plus_b_c_ok')
             ],
-            judge=dict(lang='b', code='testlib/checker/int_ocmp.py'),
+            judge=dict(lang='builtin', code='testlib/checker/int_ocmp.py'),
             config={'problem_id': 1000}
         )
         res = self.send_judge(data)
@@ -167,10 +173,10 @@ class WebserverTest(unittest.TestCase):
     def test_judge_a_plus_b_wa(self):
         data = dict(
             submissions=[
-                self.formatSubmissionJSON(301, 'c', 'a_plus_b/a_plus_b_c_wa')
+                self.formatSubmissionJSON(301, 'cpp', 'a_plus_b/a_plus_b_c_wa')
             ],
-            pretest_judge=dict(lang='b', code='testlib/checker/int_ocmp.py'),
-            judge=dict(lang='b', code='testlib/checker/int_ocmp.py'),
+            pretest_judge=dict(lang='builtin', code='testlib/checker/int_ocmp.py'),
+            judge=dict(lang='builtin', code='testlib/checker/int_ocmp.py'),
             config={'problem_id': 1000}
         )
         res = self.send_judge(data)

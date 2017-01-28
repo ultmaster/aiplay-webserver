@@ -1,11 +1,10 @@
-from celery import Celery
 import uuid
-from flask import Flask, request, json, jsonify
+import zipfile
+from flask import Flask, request, jsonify
 from config import *
 from core.handler import Handler
 from core.tester import Tester
 from local_config import *
-import zipfile
 
 
 def verify_token(data):
