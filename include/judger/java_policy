@@ -1,4 +1,6 @@
 grant {
     permission java.io.FilePermission "/judge_server/*", "read,write";
     permission java.io.FilePermission "/judge_server/", "read,write";
+    permission java.io.FilePermission "/tmp/*", "read,write";
+    permission java.io.FilePermission "/tmp/", "read,write";
 };

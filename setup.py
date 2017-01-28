@@ -20,8 +20,7 @@ def run(token):
         os.mkdir(TMP_DIR)
         shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
 
-        with open('/etc/java_policy', 'w') as f:
-            f.write(open('java_policy').read())  # java security policy init
+        shutil.copy(os.path.join(BASE_DIR, 'include/judger/java_policy'), '/etc')  # java security policy init
         with open(TOKEN_FILE_PATH, 'w') as f:
             f.write(token)  # token init
     except FileNotFoundError as e:
