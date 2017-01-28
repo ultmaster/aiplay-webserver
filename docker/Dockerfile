@@ -18,6 +18,8 @@ RUN apt-get -y install software-properties-common python-software-properties pyt
     python3-software-properties python3 python3-dev python3-pip gcc g++ git libtool python-pip libseccomp-dev \
     cmake openjdk-7-jdk nginx redis-server
 
+WORKDIR /var/www/aiplay-webserver
+
 # Install judger
 RUN useradd -r compiler
 COPY include/judger/java_policy /etc/
