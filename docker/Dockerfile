@@ -10,7 +10,9 @@ ENV DEBIAN_FRONTEND noninteractive
 # Solve Dependencies first
 COPY docker/sources.list /etc/apt/
 RUN apt-get update
-RUN apt-get -y install software-properties-common python-software-properties python python-dev python-pip python3-software-properties python3 python3-dev python3-pip gcc-5 g++-5 git libtool python-pip libseccomp-dev cmake openjdk-8-jdk apt-get -y install nginx redis-server
+RUN apt-get -y install software-properties-common python-software-properties python python-dev python-pip \
+    python3-software-properties python3 python3-dev python3-pip gcc g++ git libtool python-pip libseccomp-dev \
+    cmake openjdk-7-jdk nginx redis-server
 
 # Download main code
 RUN mkdir -p /var/www && cd /var/www && git clone https://github.com/ultmaster/aiplay-webserver
