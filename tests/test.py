@@ -10,6 +10,7 @@ import zipfile
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from server import *
+import setup
 
 PROBLEM_ID = dict(
     a_plus_b=1000,
@@ -24,23 +25,18 @@ REMOTE_URL_1 = 'http://47.88.78.6:4999'
 
 class WebserverTest(unittest.TestCase):
 
-    def setUp(self):
-        if os.path.exists(JUDGE_BASE_DIR):
-            shutil.rmtree(JUDGE_BASE_DIR)
-        os.mkdir(JUDGE_BASE_DIR)
-        os.mkdir(SUBMISSION_DIR)
-        os.mkdir(ROUND_DIR)
-        os.mkdir(TMP_DIR)
-        with open(TOKEN_FILE_PATH, 'w') as f:
-            f.write('token')
-        shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
-        shutil.copytree(os.path.join(BASE_DIR, 'tests/test_data/data'), DATA_DIR)
-        shutil.copytree(os.path.join(BASE_DIR, 'tests/test_data/pretest'), PRETEST_DIR)
+    @classmethod
+    def setUpClass(cls):
+        setup.run('token')
+
+        cls.upload('data', 1000)
+        cls.upload('data', 1001)
+        cls.upload('data', 1002)
+        cls.upload('pretest', 1000)
+        cls.upload('pretest', 1001)
 
         # Java problem
         os.chown(os.path.join(INCLUDE_DIR, 'testlib/include_test'), COMPILER_USER_UID, COMPILER_GROUP_GID)
-        with open('/etc/java_policy', 'w') as f:
-            f.write(open('java_policy').read())
 
     def tearDown(self):
         pass
@@ -49,7 +45,7 @@ class WebserverTest(unittest.TestCase):
     def send_pretest(data):
         kwargs = JSON_BASE_DICT.copy()
         kwargs["data"] = json.dumps(data)
-        url = URL + "test"
+        url = URL + "/test"
         res = requests.post(url, json=data, auth=('token', 'token')).json()
         print(json.dumps(res))
         return res
@@ -58,7 +54,7 @@ class WebserverTest(unittest.TestCase):
     def send_judge(data):
         kwargs = JSON_BASE_DICT.copy()
         kwargs["data"] = json.dumps(data)
-        url = "http://127.0.0.1:4999/judge"
+        url = URL + '/judge'
         res = requests.post(url, json=data, auth=('token', 'token')).json()
         print(json.dumps(res))
         return res
@@ -75,18 +71,18 @@ class WebserverTest(unittest.TestCase):
         return {"id": submission_id, "lang": lang, "code": open('test_src/' + code_path, "r").read()}
 
     @staticmethod
-    def add_dir_to_file(omitted_dir, source_dir, target_path):
+    def add_dir_to_file(source_dir, target_path):
         f = zipfile.ZipFile(target_path, 'w', zipfile.ZIP_DEFLATED)
-        directory = os.path.join(omitted_dir, source_dir)
-        for dir_path, dir_names, file_names in os.walk(directory):
+        for dir_path, dir_names, file_names in os.walk(source_dir):
             for filename in file_names:
-                file_real_path = os.path.join(dir_path, filename)
-                f.write(file_real_path, arcname=os.path.relpath(file_real_path, omitted_dir))
+                real_path = os.path.join(dir_path, filename)
+                f.write(real_path, arcname=os.path.relpath(real_path, source_dir))
         f.close()
 
-    def test_upload(self):
-        url = "http://127.0.0.1:4999/upload"
-        self.add_dir_to_file('test_data', 'data/1002', 'test_data/upload.zip')
+    @staticmethod
+    def upload(type, id):
+        url = URL + '/upload/%s/%d' % (type, id)
+        WebserverTest.add_dir_to_file('test_data/%s/%d' % (type, id), 'test_data/upload.zip')
         with open('test_data/upload.zip', 'rb') as f:
             res = requests.post(url, data=f, auth=('token', 'token')).json()
             print(json.dumps(res))

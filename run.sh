@@ -8,4 +8,4 @@ fi
 
 nohup redis-server &
 nohup celery worker -A config.celery &
-/usr/bin/python3 server.py 0.0.0.0 4999 NO_DEBUG
+python3 server.py

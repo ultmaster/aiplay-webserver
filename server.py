@@ -20,21 +20,24 @@ def verify_token(data):
         return False
 
 
-@app.route('/upload', methods=['POST'])
-def server_upload():
+@app.route('/upload/<tag>/<id>', methods=['POST'])
+def server_upload(tag, id):
     result = {'status': 'reject'}
     try:
+        if int(id) < 0:
+            raise ValueError
         if verify_token(request.authorization):
-            target_dir = JUDGE_BASE_DIR
+            if tag == 'pretest':
+                target_dir = os.path.join(PRETEST_DIR, id)
+            elif tag == 'data':
+                target_dir = os.path.join(DATA_DIR, id)
+            else:
+                raise ValueError
             source_path = os.path.join(TMP_DIR, str(uuid.uuid1()) + '.zip')
             with open(source_path, 'wb') as f:
                 f.write(request.data)
             source_zip = zipfile.ZipFile(source_path)
-            file_list = source_zip.namelist()
-            for name in file_list:
-                f_handle = open(os.path.join(target_dir, name), "wb")
-                f_handle.write(source_zip.read(name))
-                f_handle.close()
+            source_zip.extractall(target_dir)
             source_zip.close()
             result['status'] = 'received'
             os.remove(source_path)
@@ -70,12 +73,4 @@ def server_test():
 
 
 if __name__ == '__main__':
-    HOST, PORT, DEBUG, TOKEN = '127.0.0.1', 4999, False, 'token'
-    if len(sys.argv) == 5:
-        HOST = sys.argv[1]
-        PORT = int(sys.argv[2])
-        DEBUG = False if sys.argv[3] == 'NO_DEBUG' else True
-        TOKEN = sys.argv[4]
-    with open(TOKEN_FILE_PATH, 'w') as f:
-        f.write(TOKEN)
-    app.run(host=HOST, port=PORT, debug=DEBUG)
+    app.run(host='0.0.0.0', port=4999, debug=False)
