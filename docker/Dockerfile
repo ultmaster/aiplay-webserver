@@ -20,7 +20,7 @@ RUN apt-get -y install software-properties-common python-software-properties pyt
 
 # Install judger
 RUN useradd -r compiler
-COPY docker/java_policy /etc
+COPY include/judger/java_policy /etc/
 RUN cd include/judger && chmod +x runtest.sh
 RUN cd include/judger && ./runtest.sh
 
