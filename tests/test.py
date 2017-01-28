@@ -17,6 +17,9 @@ PROBLEM_ID = dict(
 )
 
 JSON_BASE_DICT = {"headers": {"Content-Type": "application/json"}}
+URL = 'http://127.0.0.1:4999'
+LOCAL_URL = 'http://127.0.0.1:4999'
+REMOTE_URL_1 = 'http://47.88.78.6:4999'
 
 
 class WebserverTest(unittest.TestCase):
@@ -46,7 +49,7 @@ class WebserverTest(unittest.TestCase):
     def send_pretest(data):
         kwargs = JSON_BASE_DICT.copy()
         kwargs["data"] = json.dumps(data)
-        url = "http://127.0.0.1:4999/test"
+        url = URL + "test"
         res = requests.post(url, json=data, auth=('token', 'token')).json()
         print(json.dumps(res))
         return res
@@ -74,8 +77,8 @@ class WebserverTest(unittest.TestCase):
     @staticmethod
     def add_dir_to_file(omitted_dir, source_dir, target_path):
         f = zipfile.ZipFile(target_path, 'w', zipfile.ZIP_DEFLATED)
-        dir = os.path.join(omitted_dir, source_dir)
-        for dir_path, dir_names, file_names in os.walk(dir):
+        directory = os.path.join(omitted_dir, source_dir)
+        for dir_path, dir_names, file_names in os.walk(directory):
             for filename in file_names:
                 file_real_path = os.path.join(dir_path, filename)
                 f.write(file_real_path, arcname=os.path.relpath(file_real_path, omitted_dir))

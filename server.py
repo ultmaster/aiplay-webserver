@@ -70,9 +70,12 @@ def server_test():
 
 
 if __name__ == '__main__':
-    HOST, PORT, DEBUG = '127.0.0.1', 4999, True
-    if len(sys.argv) > 1:
+    HOST, PORT, DEBUG, TOKEN = '127.0.0.1', 4999, False, 'token'
+    if len(sys.argv) == 5:
         HOST = sys.argv[1]
         PORT = int(sys.argv[2])
         DEBUG = False if sys.argv[3] == 'NO_DEBUG' else True
+        TOKEN = sys.argv[4]
+    with open(TOKEN_FILE_PATH, 'w') as f:
+        f.write(TOKEN)
     app.run(host=HOST, port=PORT, debug=DEBUG)
