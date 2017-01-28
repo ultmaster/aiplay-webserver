@@ -22,7 +22,7 @@ WORKDIR /var/www/aiplay-webserver
 RUN useradd -r compiler
 COPY docker/java_policy /etc
 RUN cd include/judger && chmod +x runtest.sh
-RUN ./runtest.sh
+RUN cd include/judger && ./runtest.sh
 
 RUN pip3 install -r requirements.txt
 RUN /usr/bin/python3 setup.py
