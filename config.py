@@ -16,6 +16,7 @@ ROUND_DIR = os.path.join(JUDGE_BASE_DIR, 'round')
 DATA_DIR = os.path.join(JUDGE_BASE_DIR, 'data')
 PRETEST_DIR = os.path.join(JUDGE_BASE_DIR, 'pretest')
 INCLUDE_DIR = os.path.join(JUDGE_BASE_DIR, 'include')
+TMP_DIR = os.path.join(JUDGE_BASE_DIR, 'tmp')
 
 RUN_USER_UID = pwd.getpwnam("nobody").pw_uid
 RUN_GROUP_GID = grp.getgrnam("nogroup").gr_gid

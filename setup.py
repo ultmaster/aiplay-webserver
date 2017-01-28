@@ -14,6 +14,7 @@ try:
     os.mkdir(ROUND_DIR)
     os.mkdir(DATA_DIR)
     os.mkdir(PRETEST_DIR)
+    os.mkdir(TMP_DIR)
     shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
 
 except FileNotFoundError as e:

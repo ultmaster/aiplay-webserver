@@ -2,7 +2,9 @@
 import shutil
 from os import sys, path
 import requests
+from requests.auth import HTTPBasicAuth
 import unittest
+import zipfile
 
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
@@ -24,6 +26,7 @@ class WebserverTest(unittest.TestCase):
         os.mkdir(JUDGE_BASE_DIR)
         os.mkdir(SUBMISSION_DIR)
         os.mkdir(ROUND_DIR)
+        os.mkdir(TMP_DIR)
         with open(TOKEN_FILE_PATH, 'w') as f:
             f.write('token')
         shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
@@ -36,30 +39,18 @@ class WebserverTest(unittest.TestCase):
     @staticmethod
     def send_pretest(data):
         kwargs = JSON_BASE_DICT.copy()
-        data.update({'token': 'token'})
         kwargs["data"] = json.dumps(data)
         url = "http://127.0.0.1:4999/test"
-        res = requests.post(url, json=data).json()
+        res = requests.post(url, json=data, auth=('token', 'token')).json()
         print(json.dumps(res))
         return res
 
     @staticmethod
     def send_judge(data):
         kwargs = JSON_BASE_DICT.copy()
-        data.update({'token': 'token'})
         kwargs["data"] = json.dumps(data)
         url = "http://127.0.0.1:4999/judge"
-        res = requests.post(url, json=data).json()
-        print(json.dumps(res))
-        return res
-
-    @staticmethod
-    def send_pretest_wrong_token(data):
-        kwargs = JSON_BASE_DICT.copy()
-        data.update({'token': 'nekot'})
-        kwargs["data"] = json.dumps(data)
-        url = "http://127.0.0.1:4999/test"
-        res = requests.post(url, json=data).json()
+        res = requests.post(url, json=data, auth=('token', 'token')).json()
         print(json.dumps(res))
         return res
 
@@ -73,6 +64,24 @@ class WebserverTest(unittest.TestCase):
             elif lang == 'j':
                 code_path += '.java'
         return {"id": submission_id, "lang": lang, "code": open('test_src/' + code_path, "r").read()}
+
+    @staticmethod
+    def add_dir_to_file(omitted_dir, source_dir, target_path):
+        f = zipfile.ZipFile(target_path, 'w', zipfile.ZIP_DEFLATED)
+        dir = os.path.join(omitted_dir, source_dir)
+        for dir_path, dir_names, file_names in os.walk(dir):
+            for filename in file_names:
+                file_real_path = os.path.join(dir_path, filename)
+                f.write(file_real_path, arcname=os.path.relpath(file_real_path, omitted_dir))
+        f.close()
+
+    def test_upload(self):
+        url = "http://127.0.0.1:4999/upload"
+        self.add_dir_to_file('test_data', 'data/1002', 'test_data/upload.zip')
+        with open('test_data/upload.zip', 'rb') as f:
+            res = requests.post(url, data=f, auth=('token', 'token')).json()
+            print(json.dumps(res))
+            return res
 
     # A * B Problem Test
 
@@ -167,16 +176,6 @@ class WebserverTest(unittest.TestCase):
         res = self.send_judge(data)
         self.assertEqual(res['code'], PRETEST_FAILED, 'Judge Failed for REASON: %s; JSON: %s'
                          % (ERROR_CODE[res['code']], json.dumps(res)))
-
-    # security tests
-
-    def test_wrong_token(self):
-        data = dict(
-            submission={'id': 2002, 'lang': 'p', 'code': open('test_src/language/p.py').read()},
-            config={'problem_id': 1001}
-        )
-        res = self.send_pretest_wrong_token(data)
-        self.assertEqual(res['status'], 'reject')
 
 
 if __name__ == '__main__':
