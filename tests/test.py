@@ -19,11 +19,13 @@ JSON_BASE_DICT = {"headers": {"Content-Type": "application/json"}}
 class WebserverTest(unittest.TestCase):
 
     def setUp(self):
-        if os.path.exists('/judge_server'):
-            shutil.rmtree('/judge_server')
-        os.mkdir('/judge_server')
-        os.mkdir('/judge_server/submission')
-        os.mkdir('/judge_server/round')
+        if os.path.exists(JUDGE_BASE_DIR):
+            shutil.rmtree(JUDGE_BASE_DIR)
+        os.mkdir(JUDGE_BASE_DIR)
+        os.mkdir(SUBMISSION_DIR)
+        os.mkdir(ROUND_DIR)
+        with open(TOKEN_FILE_PATH, 'w') as f:
+            f.write('token')
         shutil.copytree(os.path.join(BASE_DIR, 'include'), INCLUDE_DIR)
         shutil.copytree(os.path.join(BASE_DIR, 'tests/test_data/data'), DATA_DIR)
         shutil.copytree(os.path.join(BASE_DIR, 'tests/test_data/pretest'), PRETEST_DIR)
@@ -34,6 +36,7 @@ class WebserverTest(unittest.TestCase):
     @staticmethod
     def send_pretest(data):
         kwargs = JSON_BASE_DICT.copy()
+        data.update({'token': 'token'})
         kwargs["data"] = json.dumps(data)
         url = "http://127.0.0.1:4999/test"
         res = requests.post(url, json=data).json()
@@ -43,8 +46,19 @@ class WebserverTest(unittest.TestCase):
     @staticmethod
     def send_judge(data):
         kwargs = JSON_BASE_DICT.copy()
+        data.update({'token': 'token'})
         kwargs["data"] = json.dumps(data)
         url = "http://127.0.0.1:4999/judge"
+        res = requests.post(url, json=data).json()
+        print(json.dumps(res))
+        return res
+
+    @staticmethod
+    def send_pretest_wrong_token(data):
+        kwargs = JSON_BASE_DICT.copy()
+        data.update({'token': 'nekot'})
+        kwargs["data"] = json.dumps(data)
+        url = "http://127.0.0.1:4999/test"
         res = requests.post(url, json=data).json()
         print(json.dumps(res))
         return res
@@ -153,6 +167,16 @@ class WebserverTest(unittest.TestCase):
         res = self.send_judge(data)
         self.assertEqual(res['code'], PRETEST_FAILED, 'Judge Failed for REASON: %s; JSON: %s'
                          % (ERROR_CODE[res['code']], json.dumps(res)))
+
+    # security tests
+
+    def test_wrong_token(self):
+        data = dict(
+            submission={'id': 2002, 'lang': 'p', 'code': open('test_src/language/p.py').read()},
+            config={'problem_id': 1001}
+        )
+        res = self.send_pretest_wrong_token(data)
+        self.assertEqual(res['status'], 'reject')
 
 
 if __name__ == '__main__':

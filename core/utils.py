@@ -2,6 +2,7 @@ import re
 import os
 import json
 import uuid
+from config import *
 
 
 # Return a list of tuples containing inputs and corresponding outputs and weights

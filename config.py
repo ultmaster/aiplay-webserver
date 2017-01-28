@@ -5,18 +5,17 @@ from flask import Flask
 import grp
 import os
 import pwd
-DEBUG = True
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+JUDGE_BASE_DIR = '/judge_server'
+JUDGE_BASE_DIR_PAST = '/judge_server_past'
 
-JUDGER_WORKSPACE_BASE = os.path.join(BASE_DIR, "judger_run")
-LOG_BASE = os.path.join(BASE_DIR, "log")
-
-SUBMISSION_DIR = '/judge_server/submission'
-COMPILE_DIR = '/judge_server/compile'
-ROUND_DIR = '/judge_server/round'
-DATA_DIR = '/judge_server/data'
-PRETEST_DIR = '/judge_server/pretest'
-INCLUDE_DIR = '/judge_server/include'
+SUBMISSION_DIR = os.path.join(JUDGE_BASE_DIR, 'submission')
+COMPILE_DIR = os.path.join(JUDGE_BASE_DIR, 'compile')
+ROUND_DIR = os.path.join(JUDGE_BASE_DIR, 'round')
+DATA_DIR = os.path.join(JUDGE_BASE_DIR, 'data')
+PRETEST_DIR = os.path.join(JUDGE_BASE_DIR, 'pretest')
+INCLUDE_DIR = os.path.join(JUDGE_BASE_DIR, 'include')
 
 RUN_USER_UID = pwd.getpwnam("nobody").pw_uid
 RUN_GROUP_GID = grp.getgrnam("nogroup").gr_gid
@@ -24,11 +23,7 @@ RUN_GROUP_GID = grp.getgrnam("nogroup").gr_gid
 COMPILER_USER_UID = pwd.getpwnam("compiler").pw_uid
 COMPILER_GROUP_GID = grp.getgrnam("compiler").gr_gid
 
-TEST_CASE_DIR = "/test_case"
-SPJ_SRC_DIR = "/spj"
-SPJ_EXE_DIR = "/spj"
-
-TOKEN_FILE_PATH = "/token.txt"
+TOKEN_FILE_PATH = os.path.join(JUDGE_BASE_DIR, 'token')
 
 # ERROR_CODE < 0: FORGIVEN
 FINISHED = -100

@@ -57,6 +57,8 @@ class Program(object):
             os.mkdir(self.round_dir)
         if not os.path.exists(self.submission_dir):
             os.mkdir(self.submission_dir)
+        os.chown(self.round_dir, COMPILER_USER_UID, COMPILER_GROUP_GID)
+        os.chown(self.submission_dir, COMPILER_USER_UID, COMPILER_GROUP_GID)
 
         # Ready to make some files
         self.src_name = self.language_settings['src_name']
@@ -110,7 +112,7 @@ class Program(object):
         # Sum time
         self.sum_time += result['cpu_time']
         self.sum_memory = max(self.sum_memory, result['memory'])
-        if self.max_sum_time > 0 and self.sum_time > self.max_sum_time:
+        if self.sum_time > self.max_sum_time > 0:
             result['result'] = SUM_TIME_LIMIT_EXCEEDED
 
         # A fake one
@@ -130,8 +132,8 @@ class Program(object):
 
     def _compile_args(self):
         return dict(
-            max_cpu_time=30 * 1000,
-            max_real_time=300 * 1000,
+            max_cpu_time=600 * 1000,
+            max_real_time=3000 * 1000,
             max_memory=-1,
             max_output_size=128 * 1024 * 1024,
             max_process_number=_judger.UNLIMITED,
@@ -144,8 +146,8 @@ class Program(object):
             env=[("PATH=" + os.getenv("PATH"))] + self.language_settings['env'],
             log_path=self.compile_log_path,
             seccomp_rule_name=None,
-            uid=0,  # not safe?
-            gid=0
+            uid=COMPILER_USER_UID,  # not safe?
+            gid=COMPILER_GROUP_GID
         )
 
     def _run_args(self):
