@@ -7,7 +7,7 @@ MAINTAINER ultmaster scottyugochang@hotmail.com
 
 # Copy main code
 RUN mkdir -p /var/www/aiplay-webserver
-COPY core include config.py requirements.txt run.sh server.py setup.py /var/www/aiplay-webserver
+COPY core include config.py requirements.txt run.sh server.py setup.py /var/www/aiplay-webserver/
 
 ENV DEBIAN_FRONTEND noninteractive
 
