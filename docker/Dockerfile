@@ -18,7 +18,7 @@ RUN apt-get -y install nginx redis-server
 # Download main code
 RUN mkdir -p /var/www
 RUN cd /var/www && git clone https://github.com/ultmaster/aiplay-webserver
-RUN cd /aiplay-webserver
+RUN cd aiplay-webserver
 
 # Install judger
 RUN useradd -r compiler
