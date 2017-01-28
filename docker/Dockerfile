@@ -12,7 +12,7 @@ COPY docker/sources.list /etc/apt/
 RUN apt-get update
 RUN apt-get -y install software-properties-common python-software-properties python python-dev python-pip
 RUN apt-get -y install python3-software-properties python3 python3-dev python3-pip
-RUN apt-get -y install gcc g++ git libtool python-pip libseccomp-dev cmake openjdk-7-jdk
+RUN apt-get -y install gcc-5 g++-5 git libtool python-pip libseccomp-dev cmake openjdk-8-jdk
 RUN apt-get -y install nginx redis-server
 
 # Download main code
