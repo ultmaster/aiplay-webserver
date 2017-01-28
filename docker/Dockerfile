@@ -18,18 +18,16 @@ RUN apt-get -y install nginx redis-server
 # Download main code
 RUN mkdir -p /var/www
 RUN cd /var/www && git clone https://github.com/ultmaster/aiplay-webserver
-RUN cd aiplay-webserver
+WORKDIR /var/www/aiplay-webserver
 
 # Install judger
 RUN useradd -r compiler
 COPY docker/java_policy /etc
-RUN chmod +x include/judger/runtest.sh
-RUN include/judger/runtest.sh
+RUN cd include/judger && chmod +x runtest.sh && ./runtest.sh
 
 RUN pip3 install -r requirements.txt
 RUN /usr/bin/python3 setup.py
 
-WORKDIR /var/www/aiplay-webserver
 EXPOSE 4999
 
 RUN chmod +x run.sh
