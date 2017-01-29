@@ -2,6 +2,7 @@ import uuid
 import zipfile
 import sys
 import platform
+import shutil
 import subprocess
 from flask import Flask, request, jsonify
 from config import *
@@ -35,6 +36,9 @@ def server_upload(tag, pid):
                 target_dir = os.path.join(DATA_DIR, pid)
             else:
                 raise ValueError
+            if os.path.exists(target_dir):
+                shutil.rmtree(target_dir)
+            os.mkdir(target_dir)
             source_path = os.path.join(TMP_DIR, str(uuid.uuid1()) + '.zip')
             with open(source_path, 'wb') as f:
                 f.write(request.data)
