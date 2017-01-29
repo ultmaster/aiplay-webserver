@@ -71,6 +71,12 @@ import requests
 requests.post(url, data=something, auth=('token', TOKEN)).json()
 requests.post(url, json=something, auth=('token', TOKEN)).json()
 ```
+#### Update Token Method
+
+```
+<hostname>/update_token/<new_token>
+```
+Authorization required. (obviously)
 
 ### Responses
 

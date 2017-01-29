@@ -22,17 +22,17 @@ def verify_token(data):
         return False
 
 
-@app.route('/upload/<tag>/<id>', methods=['POST'])
-def server_upload(tag, id):
+@app.route('/upload/<tag>/<pid>', methods=['POST'])
+def server_upload(tag, pid):
     result = {'status': 'reject'}
     try:
-        if int(id) < 0:
+        if int(pid) < 0:
             raise ValueError
         if verify_token(request.authorization):
             if tag == 'pretest':
-                target_dir = os.path.join(PRETEST_DIR, id)
+                target_dir = os.path.join(PRETEST_DIR, pid)
             elif tag == 'data':
-                target_dir = os.path.join(DATA_DIR, id)
+                target_dir = os.path.join(DATA_DIR, pid)
             else:
                 raise ValueError
             source_path = os.path.join(TMP_DIR, str(uuid.uuid1()) + '.zip')
@@ -124,6 +124,19 @@ def server_info():
     except Exception as e:
         result['status'] = 'failure'
         result['error'] = str(e)
+    return jsonify(result)
+
+
+@app.route('/update_token/<token>', methods=['POST'])
+def server_token_update(token):
+    result = {'status': 'reject'}
+    try:
+        if verify_token(request.authorization):
+            with open(TOKEN_FILE_PATH, 'w') as f:
+                f.write(token)
+                result['status'] = 'received'
+    except Exception as e:
+        print(e)
     return jsonify(result)
 
 
