@@ -6,4 +6,4 @@ if [ `id -u` -ne 0 ]; then
     exit 1
 fi
 
-docker build -f docker/Dependencies -t aiplay/serverbase:v1 --no-cache=true .
+docker build -f docker/depend/Dockerfile -t aiplay/serverbase:v1 --no-cache=true .

@@ -6,7 +6,6 @@ FROM ubuntu:14.04
 MAINTAINER ultmaster scottyugochang@hotmail.com
 ENV DEBIAN_FRONTEND noninteractive
 
-# Solve Dependencies first
 COPY docker/sources.list /etc/apt/
 RUN apt-get update
 RUN apt-get -y install software-properties-common python-software-properties python python-dev python-pip \
