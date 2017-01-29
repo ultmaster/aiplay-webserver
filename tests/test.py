@@ -11,6 +11,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from server import *
 import setup
+from local_config import *
 
 PROBLEM_ID = dict(
     a_plus_b=1000,
@@ -20,16 +21,14 @@ PROBLEM_ID = dict(
 JSON_BASE_DICT = {"headers": {"Content-Type": "application/json",
                               'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}}
 SIMPLE_HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0'}
-URL = 'http://xxxxxxxxxxxxxxx'
 LOCAL_URL = 'http://127.0.0.1:4999'
-REMOTE_URL_1 = 'http://47.88.78.6:4999'
-TOKEN = 'xxxx'
+
 
 class WebserverTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        setup.run('token')
+        setup.run(TOKEN)
         cls.upload('data', 1000)
         cls.upload('data', 1001)
         cls.upload('data', 1002)

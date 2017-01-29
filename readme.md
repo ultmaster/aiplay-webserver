@@ -2,6 +2,8 @@
 
 Webserver for AI Playground.
 
+**Current Version:** webserver: v1; server_base: v1
+
 ## What can it do?
 
 1. Upload test data to it
@@ -15,13 +17,15 @@ The installation is very simple. (under good web condition of course)
 
 **Step 1:** clone the repository, and install [Docker](https://www.docker.com/).
 
-**Step 2:** edit `setup.py` to change the token (**IMPORTANT!!!**)
+**Step 2:** create `local_config.py` to change the token by adding `TOKEN = '<your token>'` (**IMPORTANT!!!**)
 
-**Step 3:** run `sudo ./install.sh`
+**Step 3:** run `sudo ./install_dependencies.sh`. (very slow, if you have run this in current version, skip this step)
 
 **Step 4:** have a cup of tea or coffee...
 
-**Step 5:** `sudo docker run -it -p 4999:4999 aiplay/webserver:v1`
+**Step 5:** run `sudo ./install.sh`
+
+**Step 6:** `sudo docker run -it -p 4999:4999 aiplay/webserver:v1`
 
 And if nothing ridiculous pops out, done!
 
@@ -45,6 +49,18 @@ This is a question you should ask [Codeforces](http://codeforces.com/). "Sort of
 
 
 ## How to use it
+
+### Check server status (token NOT required)
+The following is returned when GET `<hostname>/info` page.
+* status (ok/failure)
+* error (empty if none)
+* system version
+* cpu info
+* memory info
+* g++ version
+* java version
+* python3 version
+* whether redis and celery are running (if not, status is failure)
 
 ### Tokens
 
@@ -291,6 +307,15 @@ Java memory is N/A after the improvement for C++ and Python. I was hoping that s
 ### Unittest
 Running unittest is both a good way of checking and seeing what's going on. I hope code in unittest
 may help you write the code in client-server.
+
+Tips to run test: add local_config.py to your directory contain the following:
+```python
+URL = '<your url>'
+TOKEN = '<your token>'
+```
+
+### Redis and Celery
+A stupid way to run async tasks. You can safely ignore it.
 
 ### Docker
 It might be convenient to build a image of installed version of webserver. I guess that is a future plan?

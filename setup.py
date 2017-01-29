@@ -1,8 +1,7 @@
-TOKEN = 'token'     # do not use default value
-
 import shutil
 from config import *
 import uuid
+from local_config import TOKEN
 
 
 def run(token):
