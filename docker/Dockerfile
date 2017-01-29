@@ -2,7 +2,7 @@
 # VERSION 1
 # Author: ultmaster
 
-FROM aiplay/server_base:v1
+FROM aiplay/serverbase:v1
 MAINTAINER ultmaster scottyugochang@hotmail.com
 ENV DEBIAN_FRONTEND noninteractive
 
